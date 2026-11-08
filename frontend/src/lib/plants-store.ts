@@ -70,7 +70,27 @@ function newId() {
 
 export type NewPlant = Omit<SavedPlant, "id" | "addedAt">;
 
+function normalizePlantName(name: string) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
+/** Busca una planta guardada por nombre científico, ignorando mayúsculas, acentos y espacios. */
+export function findSavedPlant(plants: SavedPlant[], scientificName: string) {
+  const key = normalizePlantName(scientificName);
+  return plants.find(
+    (plant) => normalizePlantName(plant.scientificName) === key,
+  );
+}
+
 export function addPlant(plant: NewPlant): SavedPlant {
+  const existing = findSavedPlant(read(), plant.scientificName);
+  if (existing) return existing;
+
   const saved = { ...plant, id: newId(), addedAt: todayISO() };
   write([...read(), saved]);
   return saved;

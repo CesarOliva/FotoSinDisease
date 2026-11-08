@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { Suspense } from "react";
 import { FlaskConical } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Splash } from "@/components/brand/splash";
@@ -50,7 +51,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <Logo />
             </Link>
             <div className="flex items-center gap-2">
-              <DesktopNav />
+              <Suspense fallback={null}>
+                <DesktopNav />
+              </Suspense>
               {USE_MOCKS && (
                 <span
                   className="inline-flex items-center gap-1.5 rounded-full bg-warning px-2.5 py-1 text-xs font-medium text-warning-foreground"
@@ -72,7 +75,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             el diagnóstico de un especialista.
           </p>
         </footer>
-        <MobileNav />
+        <Suspense fallback={null}>
+          <MobileNav />
+        </Suspense>
       </body>
     </html>
   );
