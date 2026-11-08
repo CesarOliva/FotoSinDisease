@@ -81,3 +81,7 @@ Reinicia Next.js después de modificar estas variables.
 
 El modelo genera cuidados a partir del nombre, no analiza la salud de la foto.
 `sources` se devuelve vacío porque no se consultan fuentes externas verificadas.
+
+## Licencia
+
+Este proyecto se distribuye bajo la [licencia MIT](LICENSE).
