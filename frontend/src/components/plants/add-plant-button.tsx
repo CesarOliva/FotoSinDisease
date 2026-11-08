@@ -4,12 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { CircleCheck, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { addPlant, type NewPlant } from "@/lib/plants-store";
+import {
+  addPlant,
+  findSavedPlant,
+  useSavedPlants,
+  type NewPlant,
+} from "@/lib/plants-store";
 
 /**
- * Botón "Agregar a mis plantas". `plantKey` identifica la planta mostrada:
- * si cambia (p. ej. el usuario elige otra coincidencia), el botón vuelve a
- * estar disponible.
+ * Botón "Agregar a mis plantas". Si ya existe una planta con ese nombre
+ * científico, muestra el estado agregado aunque se vuelva a identificar.
  */
 export function AddPlantButton({
   plantKey,
@@ -22,8 +26,12 @@ export function AddPlantButton({
 }) {
   const [addedKey, setAddedKey] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const plants = useSavedPlants();
 
-  if (addedKey === plantKey) {
+  // `plantKey` es el nombre científico en todas las pantallas que usan el botón.
+  const isSaved = Boolean(findSavedPlant(plants, plantKey));
+
+  if (isSaved || addedKey === plantKey) {
     return (
       <div className="flex flex-wrap items-center gap-2">
         <p className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">

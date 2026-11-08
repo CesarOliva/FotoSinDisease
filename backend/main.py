@@ -1,3 +1,4 @@
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ from api.identify import router as identify_router
 from api.profiles import router as profiles_router
 
 load_dotenv()
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 frontend_origins = [
     origin.strip()

@@ -59,9 +59,9 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000   # http://192.168.1.103:80
 
 ## Fichas de cuidados con Ollama local
 
-Instala el modelo con `ollama pull llama3.1:8b` y ejecuta Ollama
+Instala el modelo con `ollama pull llama3.2:1b` y ejecuta Ollama
 (`ollama serve` si no está iniciado). En `backend/.env` configura
-`OLLAMA_BASE_URL=http://192.168.1.103:11434` y `OLLAMA_MODEL=llama3.1:8b`.
+`OLLAMA_BASE_URL=http://192.168.1.103:11434` y `OLLAMA_MODEL=llama3.2:1b`.
 Para que Ollama acepte conexiones desde la IP de red, inícialo con
 `OLLAMA_HOST=0.0.0.0 ollama serve`. Inicia FastAPI con `cd backend` y
 `uvicorn main:app --reload --host 0.0.0.0 --port 8000`.

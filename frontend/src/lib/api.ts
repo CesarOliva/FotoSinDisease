@@ -11,13 +11,13 @@ import type {
 
 import { MAX_UPLOAD_SIZE_MB } from "@/lib/validation";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://192.168.1.103:8000";
 export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
 
 const IDENTIFY_TIMEOUT_MS = 30_000;
 const ANALYZE_TIMEOUT_MS = 90_000;
 const SEGMENT_TIMEOUT_MS = 60_000;
-const PROFILE_TIMEOUT_MS = 190_000;
+const PROFILE_TIMEOUT_MS = 380_000;
 
 export class ApiError extends Error {
     constructor(

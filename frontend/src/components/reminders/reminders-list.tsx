@@ -1,10 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Droplets, Minus, Plus, ScanSearch, Trash } from "lucide-react";
+import { Bell, BookOpen, Droplets, Minus, Plus, ScanSearch, Trash } from "lucide-react";
 import { cn } from "cn";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { PottedPlant } from "@/components/illustrations";
 import { PlantThumb } from "@/components/plants/plant-thumb";
 import { WaterBar } from "@/components/plants/water-bar";
@@ -141,6 +152,12 @@ function ReminderItem({ plant }: { plant: SavedPlant }) {
             )}
           </div>
           <WaterBar plant={plant} className="mt-2 max-w-48" />
+          <Button variant="outline" size="sm" className="mt-2" asChild>
+            <Link href={`/recordatorios/${plant.id}`}>
+              <BookOpen data-icon="inline-start" aria-hidden />
+              Ver información
+            </Link>
+          </Button>
         </div>
       </div>
 
@@ -181,18 +198,35 @@ function ReminderItem({ plant }: { plant: SavedPlant }) {
             <Droplets data-icon="inline-start" aria-hidden />
             {wateredToday ? "Regada hoy" : "La regué hoy"}
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`Quitar ${name}`}
-            onClick={() => {
-              if (window.confirm(`¿Quitar "${name}" de tus plantas?`)) {
-                removePlant(plant.id);
-              }
-            }}
-          >
-            <Trash aria-hidden />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label={`Quitar ${name}`}>
+                <Trash aria-hidden />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive sm:mx-0">
+                  <Trash className="size-5" aria-hidden />
+                </div>
+                <AlertDialogTitle>¿Quitar esta planta?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  «{name}» se eliminará de tus plantas y sus recordatorios. Esta
+                  acción no se puede deshacer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  className={buttonVariants({ variant: "destructive" })}
+                  onClick={() => removePlant(plant.id)}
+                >
+                  <Trash data-icon="inline-start" aria-hidden />
+                  Quitar planta
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
