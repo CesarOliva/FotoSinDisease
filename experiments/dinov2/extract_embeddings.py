@@ -12,7 +12,7 @@ from torchvision import transforms
 # =====================================
 
 BASE_DIR = Path(__file__).resolve().parent
-DATASET_DIR = BASE_DIR / "dataset"
+DATASET_DIR = BASE_DIR / "dataset" / "archive"
 OUTPUT_DIR = BASE_DIR / "results"
 
 SPLITS = {
