@@ -1,0 +1,55 @@
+{
+  "scientificName": "Plectranthus verticillatus",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T16:41:40.854667Z",
+  "reviewed": false,
+  "profile": {
+    "id": "plectranthus-verticillatus",
+    "scientificName": "Plectranthus verticillatus",
+    "commonNames": [
+      "Petalillo de la India",
+      "Petalillo de la China"
+    ],
+    "family": "Lamiaceae",
+    "sunExposure": "partial_sun",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Pétalos amarillos",
+        "signs": "Las pétalos de los flores amarillos y descoloridos; pueden sentirse blandos.",
+        "solution": "Suele deberse al exceso de riego. Deja secar los primeros centímetros del sustrato y comprueba que la maceta drene bien.",
+        "kind": null
+      },
+      {
+        "name": "Pétalos amarillos y descoloridos",
+        "signs": "Los pétalos de los flores amarillos y descoloridos; pueden sentirse blandos.",
+        "solution": "Puede relacionarse con aire seco o riego irregular. Mantén una rutina estable y aleja la planta de corrientes calientes.",
+        "kind": null
+      }
+    ],
+    "light": "Luz parcialmente sombría. Tolera algo de luz directa de la luna.",
+    "watering": {
+      "criterion": "Riega cuando los 2–3 cm de las hojas estén secas al tacto.",
+      "frequencyHint": "Suele ser cada 7–10 días en épocas cálidas y cada 2–3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 25.0
+    },
+    "humidity": "Media (más de 50 %). Agradece agrupar plantas o un humidificador.",
+    "substrate": "Aireado: fibra de coco o turba con corteza de pino y perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–2 m en interior",
+    "warnings": [
+      "Puede ser tóxica para perros y gatos si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

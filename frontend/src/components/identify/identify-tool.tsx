@@ -44,7 +44,10 @@ export function IdentifyTool() {
             {candidate && profileState && (
                 <div className="mt-6 space-y-6">
                     {profileState.status === "loading" && (
-                        <LoadingPanel title="Cargando ficha de cuidados…" />
+                        <LoadingPanel
+                            title="Generando ficha de cuidados…"
+                            description="Generando ficha local, puede tardar ~1 minuto la primera vez. Después se reutiliza la caché."
+                        />
                     )}
 
                     {profileState.status === "error" && (

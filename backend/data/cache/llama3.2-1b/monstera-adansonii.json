@@ -1,0 +1,51 @@
+{
+  "scientificName": "Monstera adansonii",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T17:03:44.419912Z",
+  "reviewed": false,
+  "profile": {
+    "id": "monstera-adansonii",
+    "scientificName": "Monstera adansonii",
+    "commonNames": [
+      "Monstera de Adanson",
+      "Monstera de Adansonii"
+    ],
+    "family": "Araceae",
+    "sunExposure": "indirect",
+    "waterNeeds": "high",
+    "commonProblems": [
+      {
+        "name": "Hojas amarillas",
+        "signs": "Las hojas inferiores pierden el color y se vuelven amarillas; pueden sentirse blandas.",
+        "solution": "Suele deberse al exceso de riego. Deja secar los primeros centímetros del sustrato y comprueba que la maceta drene bien.",
+        "kind": "yellowing"
+      }
+    ],
+    "light": "Luz indirecta brillante. Tolera algo de sol suave de mañana; el sol directo intenso quema las hojas.",
+    "watering": {
+      "criterion": "Riega cuando los 3–5 cm superiores del sustrato estén secos al tacto.",
+      "frequencyHint": "Suele ser cada 7–10 días en épocas cálidas y cada 2–3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 27.0
+    },
+    "humidity": "Alta (más de 60 %). Agradece agrupar plantas o un humidificador.",
+    "substrate": "Aireado: fibra de coco o turba con corteza de pino y perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Puede ser afectada por la pudrición de raíz si se encharma.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

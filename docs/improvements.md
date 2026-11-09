@@ -214,16 +214,24 @@ Nota: el intento con Aloe vera agotó `num_predict=1000` y devolvió JSON trunca
 
 Resultado esperado: **caché hit <100 ms**; primera generación igual que en Fase 1.
 
-### Fase 3 — Caché en frontend y prefetch (2–3 h)
+### Fase 3 — Caché en frontend y prefetch (2–3 h) ✅
 
-- [ ] Mover la caché de fichas fuera del estado del componente. Hoy `usePlantIdentification` guarda `profiles` en estado local, así que al cambiar de pantalla se pierde.
-- [ ] Crear `frontend/src/lib/profile-cache.ts` con:
+- [x] Mover la caché de fichas fuera del estado del componente. Hoy `usePlantIdentification` guarda `profiles` en estado local, así que al cambiar de pantalla se pierde.
+- [x] Crear `frontend/src/lib/profile-cache.ts` con:
   - `Map` en memoria + `sessionStorage` o `localStorage`.
   - TTL y clave por nombre + modelo.
   - Deduplicación de promesas en vuelo.
-- [ ] Al recibir candidatos de Pl@ntNet, prefetch de la **primera** especie en segundo plano.
+- [x] Al recibir candidatos de Pl@ntNet, prefetch de la **primera** especie en segundo plano.
   - No prefetch de las 3 a la vez en CPU: competirían con la petición principal.
-- [ ] Mostrar un mensaje claro mientras se genera: "Generando ficha local, puede tardar ~1 minuto".
+- [x] Mostrar un mensaje claro mientras se genera: "Generando ficha local, puede tardar ~1 minuto".
+
+**Implementación:**
+
+- `frontend/src/lib/profile-cache.ts`: `Map` en memoria + `localStorage` (`florasense.profiles.v1`), TTL de 7 días y clave `<modelo>|<nombre normalizado>`.
+- Las peticiones de la misma especie comparten la misma promesa en vuelo; `prefetchProfile` calienta la caché en segundo plano.
+- `usePlantIdentification` consulta la caché antes de llamar al backend y solo limpia el estado de UI al reiniciar; la ficha permanece cacheada entre pantallas y recargas.
+- El prefetch se limita a `candidates[0]`.
+- `NEXT_PUBLIC_OLLAMA_MODEL` (frontend) debe coincidir con `OLLAMA_MODEL` (backend) porque forma parte de la clave de caché.
 
 ### Fase 4 — Catálogo generado por el modelo (medio día)
 

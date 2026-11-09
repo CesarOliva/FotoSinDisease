@@ -1,8 +1,10 @@
+import logging
 import os
 import httpx
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 @router.post("/api/identify")
 async def identify(images: list[UploadFile] = File(...)):
@@ -39,14 +41,15 @@ async def identify(images: list[UploadFile] = File(...)):
                 params={
                     "api-key": api_key,
                     "lang": "es",
-                    "nb-results": 5,
+                    "nb-results": 3,
                     "include-related-images": "true",
                 },
                 files=files,
             )
     except httpx.TimeoutException:
         raise HTTPException(504, "PlantNet tardó demasiado") from None
-    except httpx.RequestError:
+    except httpx.RequestError as exc:
+        logger.warning("Error de conexión con PlantNet: %s", exc)
         raise HTTPException(502, "No se pudo conectar con PlantNet") from None
 
     if response.status_code == 404:
@@ -56,6 +59,21 @@ async def identify(images: list[UploadFile] = File(...)):
         raise HTTPException(429, "Límite de solicitudes alcanzado")
 
     if response.status_code != 200:
+        logger.warning(
+            "PlantNet identify falló status=%s body=%r",
+            response.status_code,
+            response.text[:500],
+        )
+        if response.status_code == 400:
+            raise HTTPException(
+                422,
+                "PlantNet no reconoció una planta válida en las fotos. "
+                "Prueba con una foto más clara de la planta completa.",
+            )
+        if response.status_code == 413:
+            raise HTTPException(413, "La imagen es demasiado grande para PlantNet")
+        if response.status_code == 415:
+            raise HTTPException(415, "PlantNet no admite el formato de la imagen")
         raise HTTPException(502, "PlantNet no pudo procesar la identificación")
 
     try:

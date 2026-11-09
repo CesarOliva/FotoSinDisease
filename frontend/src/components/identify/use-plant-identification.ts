@@ -1,6 +1,11 @@
 import { useRef, useState } from "react";
 import type { Photo } from "@/components/photo/photo-slot";
-import { ApiError, getPlantProfile, identifyPlant } from "@/lib/api";
+import { ApiError, identifyPlant } from "@/lib/api";
+import {
+  getCachedProfile,
+  prefetchProfile,
+  requestProfile,
+} from "@/lib/profile-cache";
 import type { PlantProfile, SpeciesCandidate } from "@/lib/types";
 import { validateImage } from "@/lib/validation";
 
@@ -21,24 +26,48 @@ export function usePlantIdentification() {
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [identify, setIdentify] = useState<IdentifyState>({ status: "idle" });
   const [selected, setSelected] = useState(0);
-  const [profiles, setProfiles] = useState<Record<string, ProfileState>>({});
+  const [profileStates, setProfileStates] = useState<Record<string, ProfileState>>(
+    {}
+  );
   const requestId = useRef(0);
   const requestedProfiles = useRef(new Set<string>());
 
   async function loadProfile(candidate: SpeciesCandidate) {
     const profileKey = candidate.scientificName;
+    const cached = getCachedProfile(profileKey);
+
+    if (cached) {
+      requestedProfiles.current.add(profileKey);
+      setProfileStates((prev) => {
+        const current = prev[profileKey];
+        if (current?.status === "success" && current.profile === cached) {
+          return prev;
+        }
+        return { ...prev, [profileKey]: { status: "success", profile: cached } };
+      });
+      return;
+    }
+
     if (requestedProfiles.current.has(profileKey)) return;
+
     requestedProfiles.current.add(profileKey);
-    setProfiles((prev) => ({ ...prev, [profileKey]: { status: "loading" } }));
+    setProfileStates((prev) => ({
+      ...prev,
+      [profileKey]: { status: "loading" },
+    }));
+
     try {
-      const profile = await getPlantProfile(candidate.scientificName, candidate.catalogId);
-      setProfiles((prev) => ({
+      const profile = await requestProfile(profileKey, candidate.catalogId);
+      setProfileStates((prev) => ({
         ...prev,
         [profileKey]: { status: "success", profile },
       }));
     } catch {
       requestedProfiles.current.delete(profileKey);
-      setProfiles((prev) => ({ ...prev, [profileKey]: { status: "error" } }));
+      setProfileStates((prev) => ({
+        ...prev,
+        [profileKey]: { status: "error" },
+      }));
     }
   }
 
@@ -51,7 +80,12 @@ export function usePlantIdentification() {
       if (id !== requestId.current) return;
       setIdentify({ status: "success", candidates });
       const firstCandidate = candidates[0];
-      if (firstCandidate) void loadProfile(firstCandidate);
+      if (firstCandidate) {
+        // Adelanta la generación en segundo plano solo de la primera especie:
+        // las demás competirían por la CPU con la ficha que el usuario espera.
+        prefetchProfile(firstCandidate.scientificName, firstCandidate.catalogId);
+        void loadProfile(firstCandidate);
+      }
     } catch (error) {
       if (id !== requestId.current) return;
       setIdentify({
@@ -90,13 +124,20 @@ export function usePlantIdentification() {
     setPhotoError(null);
     setIdentify({ status: "idle" });
     setSelected(0);
+    setProfileStates({});
+    requestedProfiles.current.clear();
   }
 
   const candidate =
     identify.status === "success" ? identify.candidates[selected] : undefined;
+  const cachedProfile = candidate
+    ? getCachedProfile(candidate.scientificName)
+    : null;
   const profileState: ProfileState | undefined = !candidate
     ? undefined
-    : (profiles[candidate.scientificName] ?? { status: "loading" });
+    : cachedProfile
+      ? { status: "success", profile: cachedProfile }
+      : (profileStates[candidate.scientificName] ?? { status: "loading" });
 
   return {
     photo,

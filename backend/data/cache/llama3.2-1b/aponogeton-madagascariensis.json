@@ -1,0 +1,55 @@
+{
+  "scientificName": "Aponogeton madagascariensis",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T16:53:39.175134Z",
+  "reviewed": false,
+  "profile": {
+    "id": "aponogeton-madagascariensis",
+    "scientificName": "Aponogeton madagascariensis",
+    "commonNames": [
+      "Papaya de Madagascar",
+      "Papaya de Madagascar"
+    ],
+    "family": "Aponogetonaceae",
+    "sunExposure": "full_sun",
+    "waterNeeds": "high",
+    "commonProblems": [
+      {
+        "name": "Papaya amarilla",
+        "signs": "Las papayas se vuelven amarillas y se descomponen en polvo.",
+        "solution": "Suele deberse al exceso de riego. Deja secar los primeros centímetros del sustrato y comprueba que la maceta drene bien.",
+        "kind": "yellowing"
+      },
+      {
+        "name": "Papaya marrón",
+        "signs": "Las papayas se vuelven marrones y se descomponen en polvo.",
+        "solution": "Puede relacionarse con aire seco o riego irregular. Mantén una rutina estable y aleja la planta de corrientes calientes.",
+        "kind": "brown_tips"
+      }
+    ],
+    "light": "Luz directa brillante. Tolera algo de sol suave de mañana; el sol directo intenso quema las papayas.",
+    "watering": {
+      "criterion": "Riega cuando las hojas estén secas al tacto.",
+      "frequencyHint": "Suele ser cada 3–5 días en épocas cálidas y cada 7–10 días en invierno."
+    },
+    "temperature": {
+      "minC": 18.0,
+      "maxC": 28.0
+    },
+    "humidity": "Alta (más de 60 %). Agradece agrupar plantas o un humidificador.",
+    "substrate": "Aireado: fibra de coco o turba con corteza de pino y perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Puede ser tóxica para perros y gatos si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

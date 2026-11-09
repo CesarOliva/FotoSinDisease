@@ -1,0 +1,61 @@
+{
+  "scientificName": "Monstera deliciosa",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T16:37:06.899070Z",
+  "reviewed": false,
+  "profile": {
+    "id": "monstera-deliciosa",
+    "scientificName": "Monstera deliciosa",
+    "commonNames": [
+      "Costilla de Adán",
+      "Monstera"
+    ],
+    "family": "Araceae",
+    "sunExposure": "indirect",
+    "waterNeeds": "medium",
+    "commonProblems": [
+      {
+        "name": "Hojas amarillas",
+        "signs": "Las hojas inferiores pierden el color y se vuelven amarillas; pueden sentirse blandas.",
+        "solution": "Suele deberse al exceso de riego. Deja secar los primeros centímetros del sustrato y comprueba que la maceta drene bien.",
+        "kind": null
+      },
+      {
+        "name": "Puntas marrones y secas",
+        "signs": "Los bordes o las puntas de las hojas se ven secas, crujientes y de color marrón.",
+        "solution": "Puede relacionarse con aire seco o riego irregular. Mantén una rutina estable y aleja la planta de corrientes calientes.",
+        "kind": null
+      },
+      {
+        "name": "Araña roja",
+        "signs": "Aparecen puntitos claros en las hojas y telarañas muy finas, sobre todo en el envés.",
+        "solution": "Aísla la planta, limpia ambas caras de las hojas y aplica jabón potásico siguiendo las indicaciones del producto.",
+        "kind": null
+      }
+    ],
+    "light": "Luz indirecta brillante. Tolera algo de sol suave de mañana; el sol directo intenso quema las hojas.",
+    "watering": {
+      "criterion": "Riega cuando los 3–5 cm superiores del sustrato estén secos al tacto.",
+      "frequencyHint": "Suele ser cada 7–10 días en épocas cálidas y cada 2–3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 27.0
+    },
+    "humidity": "Media a alta (más de 50 %). Agradece agrupar plantas o un humidificador.",
+    "substrate": "Aireado: fibra de coco o turba con corteza de pino y perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Tóxica para perros y gatos si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}
