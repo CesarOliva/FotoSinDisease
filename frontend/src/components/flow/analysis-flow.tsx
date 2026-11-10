@@ -22,7 +22,7 @@ import type {
   SelectedSpecies,
   SpeciesCandidate,
 } from "@/lib/types";
-import { validateImage } from "@/lib/validation";
+import { MAX_IMAGES, validateImage } from "@/lib/validation";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -36,7 +36,8 @@ type AnalysisState =
   | { status: "error"; error: string }
   | { status: "success"; result: AnalysisResult };
 
-const EMPTY_PHOTOS: (Photo | null)[] = [null, null, null];
+// Una ranura por foto permitida (ver `PhotoStep`).
+const EMPTY_PHOTOS: (Photo | null)[] = Array.from({ length: MAX_IMAGES }, () => null);
 
 const EMPTY_CONTEXT: EnvironmentContext = {
   locationType: "unknown",

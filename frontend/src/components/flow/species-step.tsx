@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { ErrorPanel, LoadingPanel, StepHeader } from "@/components/flow/status-panels";
+import { RelatedImages } from "@/components/identify/related-images";
 import type { SpeciesCandidate } from "@/lib/types";
 
 const LOW_CONFIDENCE = 0.3;
@@ -72,6 +73,9 @@ export function SpeciesStep({
     }
 
     const topScore = candidates[0]?.score ?? 0;
+    const selectedCandidate = selection.startsWith("candidate-")
+        ? candidates[Number(selection.slice("candidate-".length))]
+        : undefined;
     const canContinue = selection !== "" && (selection !== "manual" || manualName.trim() !== "");
 
     return (
@@ -193,6 +197,15 @@ export function SpeciesStep({
                 <p className="mt-3 text-xs text-muted-foreground">
                 La similitud indica cuánto se parecen tus fotos; no es una certeza.
                 </p>
+            )}
+
+            {/* Fuera de las opciones: los enlaces no pueden ir dentro de un botón de radio. */}
+            {selectedCandidate && (
+                <RelatedImages
+                    images={selectedCandidate.relatedImages}
+                    name={selectedCandidate.scientificName}
+                    className="mt-4"
+                />
             )}
 
             <div className="mt-8 flex justify-between gap-3">

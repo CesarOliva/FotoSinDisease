@@ -7,7 +7,7 @@ import {
   requestProfile,
 } from "@/lib/profile-cache";
 import type { PlantProfile, SpeciesCandidate } from "@/lib/types";
-import { validateImage } from "@/lib/validation";
+import { MAX_IMAGES, validateImage, validateImageCount } from "@/lib/validation";
 
 export type IdentifyState =
   | { status: "idle" }
@@ -20,9 +20,13 @@ export type ProfileState =
   | { status: "error" }
   | { status: "success"; profile: PlantProfile | null };
 
-/** Foto única → candidatos de Pl@ntNet → ficha del candidato elegido. */
+/**
+ * 1–3 fotos → candidatos de Pl@ntNet → ficha del candidato elegido.
+ * La primera foto identifica al instante; cada foto añadida después repite la
+ * identificación con todas, porque más órganos (hoja, flor…) mejoran el resultado.
+ */
 export function usePlantIdentification() {
-  const [photo, setPhoto] = useState<Photo | null>(null);
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [identify, setIdentify] = useState<IdentifyState>({ status: "idle" });
   const [selected, setSelected] = useState(0);
@@ -71,12 +75,12 @@ export function usePlantIdentification() {
     }
   }
 
-  async function identifyFile(file: File) {
+  async function identifyFiles(files: File[]) {
     const id = ++requestId.current;
     setIdentify({ status: "loading" });
     setSelected(0);
     try {
-      const { candidates } = await identifyPlant([file]);
+      const { candidates } = await identifyPlant(files);
       if (id !== requestId.current) return;
       setIdentify({ status: "success", candidates });
       const firstCandidate = candidates[0];
@@ -98,16 +102,46 @@ export function usePlantIdentification() {
     }
   }
 
+  function revokeAll() {
+    for (const photo of photos) URL.revokeObjectURL(photo.url);
+  }
+
+  function setPhotosAndIdentify(next: Photo[]) {
+    setPhotos(next);
+    setPhotoError(null);
+    void identifyFiles(next.map((p) => p.file));
+  }
+
+  /** Primera foto: reemplaza las anteriores e identifica. */
   function selectPhoto(file: File) {
     const error = validateImage(file);
     if (error) {
       setPhotoError(error);
       return;
     }
-    if (photo) URL.revokeObjectURL(photo.url);
-    setPhoto({ file, url: URL.createObjectURL(file) });
-    setPhotoError(null);
-    void identifyFile(file);
+    revokeAll();
+    setPhotosAndIdentify([{ file, url: URL.createObjectURL(file) }]);
+  }
+
+  /** Foto adicional (hasta `MAX_IMAGES`): repite la identificación con todas. */
+  function addPhoto(file: File) {
+    const error = validateImage(file) ?? validateImageCount(photos.length + 1);
+    if (error) {
+      setPhotoError(error);
+      return;
+    }
+    setPhotosAndIdentify([...photos, { file, url: URL.createObjectURL(file) }]);
+  }
+
+  function removePhoto(index: number) {
+    const removed = photos[index];
+    if (!removed) return;
+    if (photos.length === 1) {
+      reset();
+      return;
+    }
+    URL.revokeObjectURL(removed.url);
+    setPhotosAndIdentify(photos.filter((_, i) => i !== index));
   }
 
   function choose(index: number) {
@@ -119,8 +153,8 @@ export function usePlantIdentification() {
 
   function reset() {
     requestId.current++;
-    if (photo) URL.revokeObjectURL(photo.url);
-    setPhoto(null);
+    revokeAll();
+    setPhotos([]);
     setPhotoError(null);
     setIdentify({ status: "idle" });
     setSelected(0);
@@ -140,15 +174,20 @@ export function usePlantIdentification() {
       : (profileStates[candidate.scientificName] ?? { status: "loading" });
 
   return {
-    photo,
+    /** Foto principal (la primera); se usa para la tarjeta y la miniatura. */
+    photo: photos[0] ?? null,
+    photos,
+    canAddPhoto: photos.length > 0 && photos.length < MAX_IMAGES,
     photoError,
     identify,
     selected,
     candidate,
     profileState,
     selectPhoto,
+    addPhoto,
+    removePhoto,
     choose,
-    retry: () => photo && void identifyFile(photo.file),
+    retry: () => photos.length > 0 && void identifyFiles(photos.map((p) => p.file)),
     retryProfile: () => candidate && void loadProfile(candidate),
     reset,
   };

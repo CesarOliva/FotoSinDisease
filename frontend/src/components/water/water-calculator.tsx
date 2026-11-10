@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ChoiceGroup } from "@/components/flow/choice-group";
 import { PlantThumb } from "@/components/plants/plant-thumb";
+import { StorageWarning } from "@/components/plants/storage-warning";
 import { plantName, updatePlant, useSavedPlants } from "@/lib/plants-store";
 import type { PlantProfile, WaterNeeds } from "@/lib/types";
 import { estimateWatering, formatAmount, formatInterval, type Season, type WaterLight } from "@/lib/water";
@@ -101,6 +102,7 @@ export function WaterCalculator() {
 	return (
 		<section>
 			<div className="space-y-6">
+				<StorageWarning />
 				<Card>
 					<CardHeader>
 						<CardTitle className="text-lg">1. Elige la planta</CardTitle>

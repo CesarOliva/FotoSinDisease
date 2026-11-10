@@ -12,6 +12,7 @@ import {
   CommonProblemsCard,
   PreventionCard,
 } from "@/components/results/care-profile";
+import { ProfileNotice } from "@/components/results/profile-notice";
 import { makeThumbnail } from "@/lib/image";
 import { BASE_INTERVAL_DAYS } from "@/lib/water";
 
@@ -46,7 +47,8 @@ export function IdentifyTool() {
                     {profileState.status === "loading" && (
                         <LoadingPanel
                             title="Generando ficha de cuidados…"
-                            description="Generando ficha local, puede tardar ~1 minuto la primera vez. Después se reutiliza la caché."
+                            description="Ficha local generada por IA: la primera vez tarda ~1–2 min en este equipo. Después se reutiliza la caché."
+                            estimateSeconds={90}
                         />
                     )}
 
@@ -81,6 +83,7 @@ export function IdentifyTool() {
 
                     {profile && (
                         <div className="space-y-6">
+                            <ProfileNotice />
                             <div className="grid gap-6 lg:grid-cols-2">
                                 <CareProfile profile={profile} />
                                 <div className="space-y-6">

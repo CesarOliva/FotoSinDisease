@@ -233,29 +233,43 @@ Resultado esperado: **caché hit <100 ms**; primera generación igual que en Fas
 - El prefetch se limita a `candidates[0]`.
 - `NEXT_PUBLIC_OLLAMA_MODEL` (frontend) debe coincidir con `OLLAMA_MODEL` (backend) porque forma parte de la clave de caché.
 
-### Fase 4 — Catálogo generado por el modelo (medio día)
+### Fase 4 — Catálogo generado por el modelo (medio día) ✅ (código; datos pendientes de generar)
 
 Si se decide guardar catálogo, hacerlo con información producida por el modelo y con trazabilidad:
 
-- [ ] Crear `backend/scripts/build_catalog.py` con una lista de 15–20 especies.
-- [ ] Para cada especie, llamar al mismo prompt, validar con `PlantProfile` y guardar en `backend/data/plants.json`.
-- [ ] Añadir metadatos de procedencia:
+- [x] Crear `backend/scripts/build_catalog.py` con una lista de 18 especies.
+- [x] Para cada especie, llamar al mismo prompt, validar con `PlantProfile` y guardar en `backend/data/plants.json`.
+- [x] Añadir metadatos de procedencia:
   - modelo usado
   - fecha de generación
   - versión del prompt
   - `reviewed: false`
 - [ ] Revisar manualmente las fichas y marcar `reviewed: true`.
-- [ ] Servir primero el catálogo y usar el modelo solo para especies nuevas.
-- [ ] Asignar `catalogId` en `/api/identify` cuando el nombre coincida con el catálogo.
-- [ ] Documentar en la UI/README que la ficha fue generada por IA y no verificada por una fuente externa.
+- [x] Servir primero el catálogo y usar el modelo solo para especies nuevas.
+- [x] Asignar `catalogId` en `/api/identify` cuando el nombre coincida con el catálogo.
+- [x] Documentar en la UI/README que la ficha fue generada por IA y no verificada por una fuente externa.
+
+**Implementación:**
+
+- `backend/services/catalog.py`: lectura del catálogo con recarga por `mtime`, búsqueda por nombre normalizado y escritura atómica.
+- `backend/api/profiles.py`: el catálogo se consulta antes que la caché y que Ollama; `refresh` no lo afecta. Una entrada inválida o con texto en inglés se ignora y cae al flujo normal.
+- `backend/api/identify.py`: cada candidato con coincidencia incluye `catalogId`.
+- `backend/scripts/build_catalog.py`: guardado tras cada especie (reanudable), no sobrescribe entradas con `reviewed: true`, y `--only` / `--force`.
+- Frontend: `components/results/profile-notice.tsx` muestra el aviso de procedencia en resultados e identificación.
+
+**Pendiente:** ejecutar el script. Requiere el modelo `OLLAMA_MODEL` instalado; en el equipo actual solo están `llama3.1:8b` y `llama3.2:3b`, no `llama3.2:1b`. Y después revisar las fichas.
 
 Ventaja: las especies del catálogo son instantáneas y se reduce el riesgo de respuestas distintas para la misma planta.
 
-### Fase 5 — Opcional: mejorar la espera percibida
+### Fase 5 — Opcional: mejorar la espera percibida ✅
+
+Se eligió la tercera opción (estado de carga más informativo), porque no requiere cambios en Ollama ni en el contrato de la API:
 
 - [ ] `stream: true` en Ollama y SSE desde FastAPI para mostrar progreso.
 - [ ] O un flujo 202 + job ID + polling.
-- [ ] O simplemente un estado de carga más informativo con tiempo estimado.
+- [x] O simplemente un estado de carga más informativo con tiempo estimado.
+
+**Implementación:** `LoadingPanel` (`frontend/src/components/flow/status-panels.tsx`) acepta `estimateSeconds` y muestra tiempo transcurrido, barra de progreso frente a la estimación (máximo 95 % hasta terminar) y un aviso si supera la estimación. La carga de la ficha en identificación usa una estimación de 90 s.
 
 No es prioritario si la caché y el recorte ya dejan la primera generación en ~1 minuto.
 

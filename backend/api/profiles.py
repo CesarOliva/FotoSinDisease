@@ -8,6 +8,7 @@ import httpx
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
+from services.catalog import find_entry
 from services.profile_cache import (
     PROMPT_VERSION,
     normalize_name,
@@ -266,6 +267,19 @@ async def _generate_profile_checked(name: str, model: str) -> PlantProfile:
     )
 
 
+def _catalog_profile(entry: dict, name: str) -> PlantProfile | None:
+    """Valida la ficha del catálogo; None si está rota o tiene texto en inglés."""
+    try:
+        profile = PlantProfile.model_validate(entry["profile"])
+    except ValidationError:
+        logger.warning("Entrada de catálogo inválida para %r; se ignora", name)
+        return None
+    if _english_texts(profile):
+        logger.warning("Entrada de catálogo con texto en inglés para %r; se ignora", name)
+        return None
+    return _finalize_profile(profile, name)
+
+
 async def _generate_and_cache(
     name: str, model: str, normalized_name: str
 ) -> PlantProfile:
@@ -291,6 +305,14 @@ async def plant_profile(
     name = scientificName.strip()
     if not name:
         raise HTTPException(422, "Indica el nombre de la planta")
+
+    # El catálogo tiene prioridad: no llama a Ollama y no depende de `refresh`.
+    entry = find_entry(name)
+    if entry is not None:
+        catalog_profile = _catalog_profile(entry, name)
+        if catalog_profile is not None:
+            logger.info("Catalog hit name=%r", name)
+            return catalog_profile
 
     model = os.getenv("OLLAMA_MODEL", "llama3.2:1b")
     normalized = normalize_name(name)

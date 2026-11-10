@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { PottedPlant } from "@/components/illustrations";
 import { PlantThumb } from "@/components/plants/plant-thumb";
+import { StorageWarning } from "@/components/plants/storage-warning";
 import { WaterBar } from "@/components/plants/water-bar";
 import {
   daysUntilWatering,
@@ -44,6 +45,7 @@ export function RemindersList() {
 
   return (
     <section>
+      <StorageWarning className="mb-4" />
       {plants.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed bg-card/60 px-6 py-12 text-center">
           <PottedPlant className="size-32" />

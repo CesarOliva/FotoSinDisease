@@ -17,31 +17,112 @@ export type SavedPlant = {
   waterAmountMl?: number;
 };
 
-const STORAGE_KEY = "florasense:plants:v1";
+// Formato guardado: `{ version, plants }`. Al cambiar `SavedPlant` de forma
+// incompatible, sube `SCHEMA_VERSION` y añade el paso en `migrate`.
+const STORAGE_KEY = "florasense:plants";
+const SCHEMA_VERSION = 2;
+// v1 guardaba el array sin envoltorio bajo su propia clave.
+const LEGACY_V1_KEY = "florasense:plants:v1";
+const DEFAULT_INTERVAL_DAYS = 7;
 const EMPTY: SavedPlant[] = [];
 
+type StoredPlants = { version: number; plants: unknown[] };
+
 let cache: SavedPlant[] | null = null;
+// true si el último intento de guardar en localStorage falló (lleno o bloqueado).
+let persistFailed = false;
 const listeners = new Set<() => void>();
+
+function isISODate(value: unknown): value is string {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+/** Valida una planta guardada; descarta las que no se pueden recuperar. */
+function sanitizePlant(value: unknown): SavedPlant | null {
+  if (!value || typeof value !== "object") return null;
+  const p = value as Record<string, unknown>;
+  if (typeof p.id !== "string" || typeof p.scientificName !== "string") return null;
+
+  const interval = Number(p.wateringIntervalDays);
+  return {
+    id: p.id,
+    scientificName: p.scientificName,
+    commonName: typeof p.commonName === "string" ? p.commonName : undefined,
+    catalogId: typeof p.catalogId === "string" ? p.catalogId : undefined,
+    profile:
+      p.profile && typeof p.profile === "object" ? (p.profile as PlantProfile) : null,
+    photo: typeof p.photo === "string" ? p.photo : undefined,
+    addedAt: isISODate(p.addedAt) ? p.addedAt : todayISO(),
+    lastWateredAt: isISODate(p.lastWateredAt) ? p.lastWateredAt : undefined,
+    wateringIntervalDays:
+      Number.isFinite(interval) && interval >= 1 ? Math.round(interval) : DEFAULT_INTERVAL_DAYS,
+    waterAmountMl:
+      typeof p.waterAmountMl === "number" && p.waterAmountMl > 0 ? p.waterAmountMl : undefined,
+  };
+}
+
+/** Convierte cualquier versión conocida al formato actual. */
+function migrate(data: unknown): SavedPlant[] {
+  let plants: unknown[];
+  if (Array.isArray(data)) {
+    plants = data; // v1: array sin envoltorio
+  } else if (
+    data &&
+    typeof data === "object" &&
+    Array.isArray((data as StoredPlants).plants)
+  ) {
+    plants = (data as StoredPlants).plants;
+  } else {
+    return EMPTY;
+  }
+  return plants.map(sanitizePlant).filter((p): p is SavedPlant => p !== null);
+}
+
+function persist(plants: SavedPlant[]): boolean {
+  const payload: StoredPlants = { version: SCHEMA_VERSION, plants };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function load(): SavedPlant[] {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) return migrate(JSON.parse(raw));
+
+  const legacy = localStorage.getItem(LEGACY_V1_KEY);
+  if (!legacy) return EMPTY;
+
+  const plants = migrate(JSON.parse(legacy));
+  // Solo se borra la clave antigua si el nuevo formato quedó guardado.
+  if (persist(plants)) localStorage.removeItem(LEGACY_V1_KEY);
+  return plants;
+}
 
 function read(): SavedPlant[] {
   if (cache) return cache;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    cache = raw ? (JSON.parse(raw) as SavedPlant[]) : EMPTY;
+    cache = load();
   } catch {
     cache = EMPTY;
   }
   return cache;
 }
 
-function write(next: SavedPlant[]) {
-  cache = next;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    // Almacenamiento lleno o bloqueado: se mantiene en memoria esta sesión.
-  }
+function notify() {
   for (const listener of listeners) listener();
+}
+
+/** Actualiza el estado y lo guarda. Devuelve false si no se pudo guardar. */
+function write(next: SavedPlant[]): boolean {
+  cache = next;
+  // Si falla, se mantiene en memoria durante esta sesión y se avisa en la UI.
+  const ok = persist(next);
+  persistFailed = !ok;
+  notify();
+  return ok;
 }
 
 function subscribe(listener: () => void) {
@@ -60,6 +141,15 @@ function subscribe(listener: () => void) {
 
 export function useSavedPlants() {
   return useSyncExternalStore(subscribe, read, () => EMPTY);
+}
+
+/** true si el último cambio no se pudo guardar en el navegador. */
+export function usePlantsPersistFailed() {
+  return useSyncExternalStore(
+    subscribe,
+    () => persistFailed,
+    () => false
+  );
 }
 
 function newId() {
@@ -87,20 +177,23 @@ export function findSavedPlant(plants: SavedPlant[], scientificName: string) {
   );
 }
 
-export function addPlant(plant: NewPlant): SavedPlant {
+/**
+ * Agrega una planta (o devuelve la existente con el mismo nombre).
+ * `persisted` es false si solo quedó en memoria porque el navegador no la guardó.
+ */
+export function addPlant(plant: NewPlant): { plant: SavedPlant; persisted: boolean } {
   const existing = findSavedPlant(read(), plant.scientificName);
-  if (existing) return existing;
+  if (existing) return { plant: existing, persisted: !persistFailed };
   const saved = { ...plant, id: newId(), addedAt: todayISO() };
-  write([...read(), saved]);
-  return saved;
+  return { plant: saved, persisted: write([...read(), saved]) };
 }
 
-export function updatePlant(id: string, patch: Partial<SavedPlant>) {
-  write(read().map((p) => (p.id === id ? { ...p, ...patch } : p)));
+export function updatePlant(id: string, patch: Partial<SavedPlant>): boolean {
+  return write(read().map((p) => (p.id === id ? { ...p, ...patch } : p)));
 }
 
-export function removePlant(id: string) {
-  write(read().filter((p) => p.id !== id));
+export function removePlant(id: string): boolean {
+  return write(read().filter((p) => p.id !== id));
 }
 
 export function plantName(plant: Pick<SavedPlant, "commonName" | "scientificName">) {

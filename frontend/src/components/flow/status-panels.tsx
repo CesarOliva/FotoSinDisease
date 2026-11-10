@@ -1,7 +1,11 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { CircleAlert, RotateCcw, Sprout } from "lucide-react";
 import { cn } from "cn";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 const SCANNER_CORNERS = [
   "top-3 left-3 rounded-tl-lg border-t-3 border-l-3",
@@ -10,16 +14,65 @@ const SCANNER_CORNERS = [
   "right-3 bottom-3 rounded-br-lg border-r-3 border-b-3",
 ];
 
-/** Estado de carga; con `photoUrl` muestra la foto con un efecto de escáner. */
+/** Segundos desde que se monta el componente; 0 y parado si `enabled` es false. */
+function useElapsedSeconds(enabled: boolean) {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    if (!enabled) return;
+    const startedAt = Date.now();
+    const id = window.setInterval(() => {
+      setSeconds(Math.floor((Date.now() - startedAt) / 1000));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [enabled]);
+
+  return seconds;
+}
+
+function EstimatedProgress({
+  elapsed,
+  estimate,
+}: {
+  elapsed: number;
+  estimate: number;
+}) {
+  // Nunca llega al 100 % hasta que termina de verdad: la estimación puede fallar.
+  const percent = Math.min(95, Math.round((elapsed / estimate) * 100));
+
+  return (
+    <div className="w-full max-w-sm space-y-2">
+      <Progress value={percent} aria-label="Progreso estimado" />
+      <p className="text-xs tabular-nums text-muted-foreground">
+        {elapsed} s transcurridos · estimado ~{estimate} s
+      </p>
+      {elapsed >= estimate && (
+        <p className="text-xs text-muted-foreground">
+          Sigue en curso: el modelo local funciona en CPU y puede tardar más de lo previsto.
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Estado de carga. Con `photoUrl` muestra la foto con un efecto de escáner.
+ * Con `estimateSeconds` muestra tiempo transcurrido y progreso frente a la estimación.
+ */
 export function LoadingPanel({
   title,
   description,
   photoUrl,
+  estimateSeconds,
 }: {
   title: string;
   description?: string;
   photoUrl?: string;
+  estimateSeconds?: number;
 }) {
+  const timed = estimateSeconds !== undefined;
+  const elapsed = useElapsedSeconds(timed);
+
   return (
     <div
       className="flex flex-col items-center gap-3 rounded-3xl border bg-card px-6 py-10 text-center shadow-sm"
@@ -44,6 +97,7 @@ export function LoadingPanel({
       {description && (
         <p className="max-w-sm text-sm text-muted-foreground">{description}</p>
       )}
+      {timed && <EstimatedProgress elapsed={elapsed} estimate={estimateSeconds} />}
     </div>
   );
 }

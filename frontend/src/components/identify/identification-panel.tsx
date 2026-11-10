@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PhotoSlot } from "@/components/photo/photo-slot";
 import { ErrorPanel, LoadingPanel } from "@/components/flow/status-panels";
+import { PhotoStrip } from "@/components/identify/photo-strip";
+import { RelatedImages } from "@/components/identify/related-images";
 import type { PlantIdentification } from "@/components/identify/use-plant-identification";
-import { MAX_UPLOAD_SIZE_MB } from "@/lib/validation";
+import { MAX_IMAGES, MAX_UPLOAD_SIZE_MB } from "@/lib/validation";
 
 const LOW_CONFIDENCE = 0.3;
 
@@ -21,8 +23,23 @@ export function IdentificationPanel({
     identification: PlantIdentification;
     action?: React.ReactNode;
 }) {
-    const { photo, photoError, identify, selected, candidate } = identification;
+    const { photo, photos, canAddPhoto, photoError, identify, selected, candidate } = identification;
     const [choosingSource, setChoosingSource] = useState(false);
+
+    const photoStrip = (
+        <PhotoStrip
+            photos={photos}
+            canAdd={canAddPhoto}
+            onAdd={identification.addPhoto}
+            onRemove={identification.removePhoto}
+        />
+    );
+    const photoErrorAlert = photoError && (
+        <Alert variant="destructive">
+            <CircleAlert aria-hidden />
+            <AlertDescription>{photoError}</AlertDescription>
+        </Alert>
+    );
 
     function handleFile(file: File | undefined) {
         if (file) identification.selectPhoto(file);
@@ -88,14 +105,10 @@ export function IdentificationPanel({
                     ) : undefined}
                     className="sm:aspect-4/3"
                 />
-                {photoError && (
-                    <Alert variant="destructive" className="mt-3">
-                        <CircleAlert aria-hidden />
-                        <AlertDescription>{photoError}</AlertDescription>
-                    </Alert>
-                )}
+                {photoErrorAlert && <div className="mt-3">{photoErrorAlert}</div>}
                 <p className="mt-3 text-center text-xs text-muted-foreground">
-                    JPG o PNG, hasta {MAX_UPLOAD_SIZE_MB} MB.
+                    JPG o PNG, hasta {MAX_UPLOAD_SIZE_MB} MB. Después podrás añadir
+                    hasta {MAX_IMAGES} fotos para afinar el resultado.
                 </p>
             </div>
         );
@@ -113,9 +126,14 @@ export function IdentificationPanel({
 
     if (identify.status === "error") {
         return (
-            <ErrorPanel message={identify.error} onRetry={identification.retry}>
-                <Button variant="outline" onClick={identification.reset}>Usar otra foto</Button>
-            </ErrorPanel>
+            <div className="space-y-3">
+                <ErrorPanel message={identify.error} onRetry={identification.retry}>
+                    <Button variant="outline" onClick={identification.reset}>Empezar con otra foto</Button>
+                </ErrorPanel>
+                {/* Con varias fotos, quitar la que falla vuelve a identificar con el resto. */}
+                {photos.length > 1 && photoStrip}
+                {photoErrorAlert}
+            </div>
         );
     }
 
@@ -126,10 +144,13 @@ export function IdentificationPanel({
                     <CircleQuestionMark aria-hidden />
                     <AlertTitle>No reconocimos la planta</AlertTitle>
                     <AlertDescription>
-                        Prueba con otra foto donde se vea la planta completa y con luz natural.
+                        Prueba con otra foto donde se vea la planta completa y con luz natural,
+                        o añade una foto de otra parte de la planta.
                     </AlertDescription>
                 </Alert>
-                <Button variant="outline" onClick={identification.reset}>Usar otra foto</Button>
+                {photos.length > 0 && photoStrip}
+                {photoErrorAlert}
+                <Button variant="outline" onClick={identification.reset}>Empezar con otra foto</Button>
             </div>
         );
     }
@@ -203,6 +224,14 @@ export function IdentificationPanel({
                         </div>
                     </div>
                 )}
+
+                <RelatedImages
+                    images={candidate.relatedImages}
+                    name={candidate.scientificName}
+                />
+
+                {photoStrip}
+                {photoErrorAlert}
 
                 {action}
             </div>
