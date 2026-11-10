@@ -3,8 +3,13 @@ import os
 import httpx
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
+from services.catalog import catalog_id_for
+
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+# Mismo límite que el frontend (`MAX_IMAGES` en frontend/src/lib/validation.ts).
+MAX_IMAGES = 3
 
 @router.post("/api/identify")
 async def identify(images: list[UploadFile] = File(...)):
@@ -12,8 +17,8 @@ async def identify(images: list[UploadFile] = File(...)):
     if not api_key:
         raise HTTPException(503, "PlantNet no está configurado")
 
-    if not 1 <= len(images) <= 5:
-        raise HTTPException(422, "Envía entre 1 y 5 imágenes")
+    if not 1 <= len(images) <= MAX_IMAGES:
+        raise HTTPException(422, f"Envía entre 1 y {MAX_IMAGES} imágenes")
 
     files = []
 
@@ -88,6 +93,9 @@ async def identify(images: list[UploadFile] = File(...)):
                         "url": image["url"].get("m") or image["url"].get("o") or image["url"].get("s"),
                         "originalUrl": image["url"].get("o") or image["url"].get("m") or image["url"].get("s"),
                         "organ": image.get("organ"),
+                        # Las fotos de Pl@ntNet tienen licencia CC: hay que acreditarlas.
+                        "author": image.get("author"),
+                        "license": image.get("license"),
                     }
                     for image in (result.get("images") or [])
                     if isinstance(image, dict)
@@ -99,5 +107,10 @@ async def identify(images: list[UploadFile] = File(...)):
         ]
     except (ValueError, KeyError, TypeError):
         raise HTTPException(502, "Respuesta inesperada de PlantNet") from None
+
+    for candidate in candidates:
+        catalog_id = catalog_id_for(candidate["scientificName"])
+        if catalog_id:
+            candidate["catalogId"] = catalog_id
 
     return {"candidates": candidates}

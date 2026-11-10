@@ -5,13 +5,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { StepHeader } from "@/components/flow/status-panels";
 import { PhotoSlot, type Photo } from "@/components/photo/photo-slot";
-import { MAX_UPLOAD_SIZE_MB } from "@/lib/validation";
+import { MAX_IMAGES, MAX_UPLOAD_SIZE_MB } from "@/lib/validation";
 
+// Una ranura por foto permitida; no se muestran más de `MAX_IMAGES`.
 const SLOTS = [
 	{ title: "Planta completa", hint: "Toda la planta con su maceta" },
 	{ title: "Hoja de cerca", hint: "Opcional · una hoja bien enfocada" },
 	{ title: "Zona afectada", hint: "Opcional · manchas, bordes secos…" },
-];
+].slice(0, MAX_IMAGES);
 
 type PhotoStepProps = {
 	photos: (Photo | null)[];
@@ -34,7 +35,7 @@ export function PhotoStep({
 		<section>
 			<StepHeader
 				title="Fotografía tu planta"
-				description="Sube de 1 a 3 fotos de la misma planta. La identificaremos y te diremos cómo cuidarla."
+				description={`Sube de 1 a ${MAX_IMAGES} fotos de la misma planta. La identificaremos y te diremos cómo cuidarla.`}
 			/>
 
 			<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PlantThumb } from "@/components/plants/plant-thumb";
+import { StorageWarning } from "@/components/plants/storage-warning";
 import { WaterBar } from "@/components/plants/water-bar";
 import { CareProfile, CommonProblemsCard, PreventionCard } from "@/components/results/care-profile";
 import { cn } from "cn";
@@ -45,6 +46,7 @@ export function SavedPlantDetails({ id }: { id: string }) {
 
   return (
     <section className="space-y-6">
+      <StorageWarning />
       <div className="overflow-hidden rounded-3xl border bg-card shadow-sm duration-500 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 sm:flex">
         <div className="sm:w-64 sm:shrink-0">
           <PlantThumb

@@ -82,6 +82,25 @@ Reinicia Next.js después de modificar estas variables.
 El modelo genera cuidados a partir del nombre, no analiza la salud de la foto.
 `sources` se devuelve vacío porque no se consultan fuentes externas verificadas.
 
+### Catálogo generado por el modelo
+
+`backend/data/plants.json` contiene fichas de especies comunes generadas con el
+mismo modelo local. Cada entrada guarda su procedencia (modelo, fecha y versión
+del prompt) y `reviewed: false` hasta que una persona la revise. Las especies del
+catálogo se sirven al instante, sin llamar a Ollama, y `/api/identify` les asigna
+un `catalogId`. Para generarlo o completarlo (con Ollama en marcha):
+
+```bash
+cd backend
+python scripts/build_catalog.py               # solo las especies que faltan
+python scripts/build_catalog.py --only "Ficus lyrata"
+python scripts/build_catalog.py --force       # regenera las no revisadas
+```
+
+Las entradas con `reviewed: true` nunca se sobrescriben. Tras revisar una ficha,
+cambia su `reviewed` a `true` a mano. Todas las fichas se muestran con un aviso de
+que son generadas por IA y no verificadas con una fuente externa.
+
 ## Licencia
 
 Este proyecto se distribuye bajo la [licencia MIT](LICENSE).

@@ -24,6 +24,7 @@ import {
   PlantViewer,
   type SegmentationState,
 } from "@/components/results/plant-viewer";
+import { ProfileNotice } from "@/components/results/profile-notice";
 import { RecommendationsList } from "@/components/results/recommendations-list";
 import {
   healthStatusLabels,
@@ -218,6 +219,7 @@ export function ResultsView({
         </div>
         {profile && (
           <div className="space-y-6 lg:col-span-2">
+            <ProfileNotice />
             <CareProfile profile={profile} />
             {profile.commonProblems && profile.commonProblems.length > 0 && (
               <CommonProblemsCard problems={profile.commonProblems} />

@@ -9,7 +9,7 @@ import type {
     SelectedSpecies,
 } from "@/lib/types";
 
-import { MAX_UPLOAD_SIZE_MB } from "@/lib/validation";
+import { MAX_UPLOAD_SIZE_MB, validateImageCount } from "@/lib/validation";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://192.168.1.103:8000";
 export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
@@ -94,7 +94,11 @@ function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** Última barrera antes de enviar: el backend rechaza más de `MAX_IMAGES` fotos. */
 function imagesForm(files: File[]) {
+    const countError = validateImageCount(files.length);
+    if (countError) throw new ApiError(countError, null);
+
     const form = new FormData();
     for (const file of files) form.append("images", file);
 
@@ -106,19 +110,18 @@ export function resolveApiUrl(url: string) {
 }
 
 export async function identifyPlant(files: File[]): Promise<IdentifyResponse> {
+    const body = imagesForm(files);
+
     if (USE_MOCKS) {
         await delay(1200);
-        console.log("/api/identify", mockIdentify);
         return mockIdentify;
     }
 
-    const result = await request<IdentifyResponse>(
+    return request<IdentifyResponse>(
         "/api/identify",
-        { method: "POST", body: imagesForm(files) },
+        { method: "POST", body },
         IDENTIFY_TIMEOUT_MS
     );
-    console.log("/api/identify", result);
-    return result;
 }
 
 export async function analyzePlant(
@@ -126,13 +129,14 @@ export async function analyzePlant(
     species: SelectedSpecies,
     context: EnvironmentContext
 ): Promise<AnalysisResult> {
+    const form = imagesForm(files);
+
     if (USE_MOCKS) {
         await delay(2200);
 
         return mockAnalyze(species, context);
     }
 
-    const form = imagesForm(files);
     form.append("species", JSON.stringify(species));
     form.append("context", JSON.stringify(context));
 

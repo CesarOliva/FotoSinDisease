@@ -46,7 +46,8 @@ Registro vivo de problemas detectados y trabajo pendiente. Marcar cada casilla a
 - [ ] **BE-01 · Estructura incompleta.** Faltan `backend/schemas/`, `backend/services/`, `backend/data/` y `backend/tests/` respecto al plan.
 - [ ] **BE-02 · Dependencias sin versión y faltantes.** `backend/requirements.txt` no fija versiones; faltan Pillow/OpenCV (y las de segmentación); usa `dotenv` en vez de `python-dotenv`.
 - [ ] **BE-03 · Variables de entorno ignoradas.** `MAX_UPLOAD_SIZE_MB`, `MAX_IMAGES_PER_REQUEST`, `VLM_API_KEY`, `VLM_MODEL` no se leen; límites hardcodeados en `backend/api/identify.py:13,22,27`.
-- [ ] **BE-04 · Contrato de cantidad de fotos.** Backend acepta 1–5; plan y UI usan 1–3. Unificar en los dos lados.
+- [x] **BE-04 · Contrato de cantidad de fotos.** Backend acepta 1–5; plan y UI usan 1–3. Unificar en los dos lados.
+  - Resuelto 2026-11-10: `identify.py` acepta 1–3 (`MAX_IMAGES = 3`) y `.env.example` usa `MAX_IMAGES_PER_REQUEST=3`. La variable sigue sin leerse (ver BE-03).
 - [ ] **BE-05 · Formatos de imagen.** Plan exige WebP; backend y frontend solo aceptan JPG/PNG (`identify.py:19`, `validation.ts:1`).
 - [ ] **BE-06 · Validación débil de archivos.** Se confía en `content_type`; no se validan magic bytes, dimensiones ni límite agregado del request; no se limpia EXIF.
 - [ ] **BE-07 · Sin rate limiting, caché ni reintentos.** Ollama puede ocupar 180 s por petición; fichas se regeneran siempre.
@@ -62,17 +63,25 @@ Registro vivo de problemas detectados y trabajo pendiente. Marcar cada casilla a
 ## Frontend — Deuda técnica
 
 - [ ] **FE-01 · URL de API por defecto hardcodeada a IP de LAN.** `frontend/src/lib/api.ts:14` y `.env.example`; el README dice localhost. Usar localhost por defecto.
-- [ ] **FE-02 · `console.log` con respuestas de identificación.** `frontend/src/lib/api.ts:111,120`; eliminar para producción.
-- [ ] **FE-03 · `MAX_IMAGES = 5` sin usar.** `frontend/src/lib/validation.ts:2`; no se valida cantidad de fotos.
-- [ ] **FE-04 · `relatedImages` sin usar.** El tipo existe, el backend las devuelve, pero no se renderizan ni se mapean `author`/`license`.
-- [ ] **FE-05 · `catalogId` nunca llega del backend real.** Solo funciona en modo mock; el badge "Ficha de cuidados" no aparecerá en producción.
-- [ ] **FE-06 · Sin error boundaries ni páginas de estado.** Faltan `error.tsx`, `not-found.tsx`, `loading.tsx`.
-- [ ] **FE-07 · `AddPlantButton` sin manejo de errores.** `frontend/src/components/plants/add-plant-button.tsx:40-45` no captura fallos de `buildPlant`.
-- [ ] **FE-08 · `localStorage` silencia fallos de cuota.** `frontend/src/lib/plants-store.ts:39-43`; sin migración de esquema `v1`.
+- [x] **FE-02 · `console.log` con respuestas de identificación.** `frontend/src/lib/api.ts:111,120`; eliminar para producción.
+  - Resuelto 2026-11-10: eliminados.
+- [x] **FE-03 · `MAX_IMAGES = 5` sin usar.** `frontend/src/lib/validation.ts:2`; no se valida cantidad de fotos.
+  - Resuelto 2026-11-10: `MAX_IMAGES = 3` y `validateImageCount`. `imagesForm` (`api.ts`) bloquea envíos fuera de 1–3, también en modo mock. Las ranuras de Diagnosticar salen de `MAX_IMAGES`.
+- [x] **FE-04 · `relatedImages` sin usar.** El tipo existe, el backend las devuelve, pero no se renderizan ni se mapean `author`/`license`.
+  - Resuelto 2026-11-10: `components/identify/related-images.tsx` muestra hasta 3 fotos de referencia con órgano, autor y licencia, y enlaza al original. Aparece en Identificar y en el paso de especie de Diagnosticar. El backend ahora incluye `author` y `license`.
+- [x] **FE-05 · `catalogId` nunca llega del backend real.** Solo funciona en modo mock; el badge "Ficha de cuidados" no aparecerá en producción.
+  - Resuelto 2026-11-10 con la Fase 4 de `docs/improvements.md`: `/api/identify` añade `catalogId` cuando la especie está en `backend/data/plants.json`. Requiere generar el catálogo con `scripts/build_catalog.py`.
+- [x] **FE-06 · Sin error boundaries ni páginas de estado.** Faltan `error.tsx`, `not-found.tsx`, `loading.tsx`.
+  - Resuelto 2026-11-10: `app/error.tsx` (con `retry`, API de Next 16), `app/not-found.tsx`, `app/loading.tsx` y `app/global-error.tsx` para fallos del layout raíz.
+- [x] **FE-07 · `AddPlantButton` sin manejo de errores.** `frontend/src/components/plants/add-plant-button.tsx:40-45` no captura fallos de `buildPlant`.
+  - Resuelto 2026-11-10: `try/catch/finally`, mensaje de error y estado "Agregando…".
+- [x] **FE-08 · `localStorage` silencia fallos de cuota.** `frontend/src/lib/plants-store.ts:39-43`; sin migración de esquema `v1`.
+  - Resuelto 2026-11-10: formato versionado `{ version: 2, plants }` en `florasense:plants`. Los datos de `florasense:plants:v1` se migran y la clave antigua se borra solo si el nuevo guardado funciona. Cada planta se sanea al leerla. Los fallos de guardado se exponen con `usePlantsPersistFailed()`, y `StorageWarning` los avisa en recordatorios, detalle, calculadora y al agregar.
 - [ ] **FE-09 · Sin script `typecheck` ni tests.** `package.json` solo tiene `lint`; agregar `typecheck`, Vitest/Playwright y E2E del flujo principal.
 - [ ] **FE-10 · Accesibilidad mejorable.** `window.confirm` para borrar, transiciones de paso sin gestión de foco y sin `aria-live` en estados de carga.
 - [ ] **FE-11 · Flags experimentales de Next sin verificación.** `cacheComponents` y `partialPrefetching` en `next.config.ts`; validar build de producción.
-- [ ] **FE-12 · Una sola foto en Identificar.** La herramienta usa 1 foto; el plan permite 1–3. Decidir si es intencional y documentarlo.
+- [x] **FE-12 · Una sola foto en Identificar.** La herramienta usa 1 foto; el plan permite 1–3. Decidir si es intencional y documentarlo.
+  - Resuelto 2026-11-10: decisión de máximo 3 fotos. La primera foto identifica al instante. Después se pueden añadir hasta 2 más (hoja, flor, fruto…), y cada cambio repite la identificación con todas. También se pueden quitar fotos (`components/identify/photo-strip.tsx`).
 
 ---
 
