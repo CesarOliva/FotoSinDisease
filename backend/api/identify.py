@@ -47,7 +47,6 @@ async def identify(images: list[UploadFile] = File(...)):
                     "api-key": api_key,
                     "lang": "es",
                     "nb-results": 3,
-                    "include-related-images": "true",
                 },
                 files=files,
             )
@@ -88,20 +87,6 @@ async def identify(images: list[UploadFile] = File(...)):
                 "scientificName": result["species"]["scientificNameWithoutAuthor"],
                 "commonNames": result["species"].get("commonNames") or [],
                 "score": result.get("score"),
-                "relatedImages": [
-                    {
-                        "url": image["url"].get("m") or image["url"].get("o") or image["url"].get("s"),
-                        "originalUrl": image["url"].get("o") or image["url"].get("m") or image["url"].get("s"),
-                        "organ": image.get("organ"),
-                        # Las fotos de Pl@ntNet tienen licencia CC: hay que acreditarlas.
-                        "author": image.get("author"),
-                        "license": image.get("license"),
-                    }
-                    for image in (result.get("images") or [])
-                    if isinstance(image, dict)
-                    and isinstance(image.get("url"), dict)
-                    and any(image["url"].get(size) for size in ("m", "o", "s"))
-                ],
             }
             for result in data["results"]
         ]

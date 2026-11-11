@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { PhotoSlot } from "@/components/photo/photo-slot";
 import { ErrorPanel, LoadingPanel } from "@/components/flow/status-panels";
 import { PhotoStrip } from "@/components/identify/photo-strip";
-import { RelatedImages } from "@/components/identify/related-images";
 import type { PlantIdentification } from "@/components/identify/use-plant-identification";
 import { MAX_IMAGES, MAX_UPLOAD_SIZE_MB } from "@/lib/validation";
 
@@ -224,11 +223,6 @@ export function IdentificationPanel({
                         </div>
                     </div>
                 )}
-
-                <RelatedImages
-                    images={candidate.relatedImages}
-                    name={candidate.scientificName}
-                />
 
                 {photoStrip}
                 {photoErrorAlert}

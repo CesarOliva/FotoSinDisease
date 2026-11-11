@@ -67,8 +67,6 @@ Registro vivo de problemas detectados y trabajo pendiente. Marcar cada casilla a
   - Resuelto 2026-11-10: eliminados.
 - [x] **FE-03 · `MAX_IMAGES = 5` sin usar.** `frontend/src/lib/validation.ts:2`; no se valida cantidad de fotos.
   - Resuelto 2026-11-10: `MAX_IMAGES = 3` y `validateImageCount`. `imagesForm` (`api.ts`) bloquea envíos fuera de 1–3, también en modo mock. Las ranuras de Diagnosticar salen de `MAX_IMAGES`.
-- [x] **FE-04 · `relatedImages` sin usar.** El tipo existe, el backend las devuelve, pero no se renderizan ni se mapean `author`/`license`.
-  - Resuelto 2026-11-10: `components/identify/related-images.tsx` muestra hasta 3 fotos de referencia con órgano, autor y licencia, y enlaza al original. Aparece en Identificar y en el paso de especie de Diagnosticar. El backend ahora incluye `author` y `license`.
 - [x] **FE-05 · `catalogId` nunca llega del backend real.** Solo funciona en modo mock; el badge "Ficha de cuidados" no aparecerá en producción.
   - Resuelto 2026-11-10 con la Fase 4 de `docs/improvements.md`: `/api/identify` añade `catalogId` cuando la especie está en `backend/data/plants.json`. Requiere generar el catálogo con `scripts/build_catalog.py`.
 - [x] **FE-06 · Sin error boundaries ni páginas de estado.** Faltan `error.tsx`, `not-found.tsx`, `loading.tsx`.

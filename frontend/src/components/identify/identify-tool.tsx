@@ -47,7 +47,7 @@ export function IdentifyTool() {
                     {profileState.status === "loading" && (
                         <LoadingPanel
                             title="Generando ficha de cuidados…"
-                            description="Ficha local generada por IA: la primera vez tarda ~1–2 min en este equipo. Después se reutiliza la caché."
+                            description="Generando Ficha local de cuidados: Esto puede tardar entre 1 y 2 minutos la primera vez."
                             estimateSeconds={90}
                         />
                     )}
