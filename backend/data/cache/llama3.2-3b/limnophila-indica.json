@@ -1,0 +1,63 @@
+{
+  "scientificName": "Limnophila indica",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T17:03:01.296380Z",
+  "reviewed": false,
+  "profile": {
+    "id": "limnophila-indica",
+    "scientificName": "Limnophila indica",
+    "commonNames": [
+      "Canela de India",
+      "Canela de la India"
+    ],
+    "family": "Rhodaniaceae",
+    "sunExposure": "partial_sun",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Pérdida de olor",
+        "signs": "El olor a canela se desvanece con el tiempo; puede ser necesario reemplazar el aceite de canela.",
+        "solution": "Reemplaza el aceite de canela con un aceite vegetal como el coco o el oliva.",
+        "kind": "pests"
+      },
+      {
+        "name": "Pérdida de raíces",
+        "signs": "Las raíces se desvanecen o se descomponen en el sustrato.",
+        "solution": "Reemplaza el sustrato cada 1-2 años.",
+        "kind": "pests"
+      },
+      {
+        "name": "Pérdida de foliación",
+        "signs": "Las hojas se desvanecen o se vuelven amarillas.",
+        "solution": "Reemplaza el sustrato cada 1-2 años.",
+        "kind": "pests"
+      }
+    ],
+    "light": "Luz parcialmente sombría. Tolera algo de luz directa en el día.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté húmedo pero no empapado.",
+      "frequencyHint": "Suele ser cada 7-10 días en épocas cálidas y cada 2-3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 25.0
+    },
+    "humidity": "Media (50-70%). Agradece un humidificador o un lugar con buena ventilación.",
+    "substrate": "Aireado: fibra de pino o madera seca con perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1-3 m en interior",
+    "warnings": [
+      "Puede ser sensible a la sequía.",
+      "Revisa regularmente las raíces para detectar problemas de raíz.",
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas."
+    ],
+    "prevention": [
+      "Mantén una rutina regular de cuidados para evitar problemas de raíz.",
+      "Revisa regularmente el sustrato para detectar problemas de humedad.",
+      "Evita el encharcamiento para prevenir la pudrición de raíz."
+    ],
+    "sources": []
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "scientificName": "Mentha spicata",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T17:17:16.410352Z",
+  "reviewed": false,
+  "profile": {
+    "id": "mentha-spicata",
+    "scientificName": "Mentha spicata",
+    "commonNames": [
+      "Pepino",
+      "Pepino silvestre",
+      "Menta silvestre"
+    ],
+    "family": "Lamiaceae",
+    "sunExposure": "partial_sun",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Pérdida de olor",
+        "signs": "El aroma del pepino se vea reducido o desaparecer.",
+        "solution": "Asegúrate de mantener una buena humedad en el ambiente y de no excederte en el riego. Puedes intentar agregar un poco de humedad en el aire o usar un humidificador si es necesario.",
+        "kind": null
+      },
+      {
+        "name": "Pérdida de color",
+        "signs": "Las hojas o tallos del pepino pierdan color y se vuelvan amarillas o marrones.",
+        "solution": "Asegúrate de mantener una buena humedad en el ambiente y de no excederte en el riego. Puedes intentar agregar un poco de humedad en el aire o usar un humidificador si es necesario.",
+        "kind": null
+      },
+      {
+        "name": "Pérdida de forma",
+        "signs": "El pepino pierda su forma natural y se vuelva redondeado o irregular.",
+        "solution": "Asegúrate de mantener una buena humedad en el ambiente y de no excederte en el riego. Puedes intentar agregar un poco de humedad en el aire o usar un humidificador si es necesario.",
+        "kind": null
+      }
+    ],
+    "light": "Luz parcial a total. Agradece un lugar soleado, pero no directo.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté ligeramente seco al tacto.",
+      "frequencyHint": "Suele ser cada 7-10 días en verano y cada 2-3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 10.0,
+      "maxC": 20.0
+    },
+    "humidity": "Media (50-70%). Agradece un lugar con un ambiente húmedo.",
+    "substrate": "Aireado: fibra de pino o madera con perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Puede ser tóxica para perros y gatos si se mastica (alcaloide de menta)."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

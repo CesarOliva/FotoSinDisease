@@ -1,6 +1,6 @@
-# FloraSense
+# FotoSinDisease
 
-MVP para identificar plantas ornamentales a partir de fotos, analizar visualmente su ambiente y proponer cuidados contextualizados. Ver `docs/FloraSense_Plan_Implementacion_8_Dias.md` para el plan completo, contratos de API y cronograma.
+**FotoSinDisease** (proyecto FloraSense) es un MVP para identificar plantas ornamentales a partir de fotos, analizar visualmente su ambiente y proponer cuidados contextualizados. Ver `docs/FloraSense_Plan_Implementacion_8_Dias.md` para el plan completo, contratos de API y cronograma. El logo, los colores y el tono de la marca están en `docs/identidad-marca.md`.
 
 ## Estructura del monorepo
 
@@ -34,7 +34,7 @@ FloraSense/
 ```bash
 cd frontend
 npm install
-npm run dev        # http://localhost:3000
+npm run dev        # http://192.168.1.103:3000
 cp .env.example .env.local   # configurar NEXT_PUBLIC_API_BASE_URL
 ```
 
@@ -46,8 +46,14 @@ python -m venv .venv
 .venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 cp .env.example .env          # completar claves de API
-uvicorn main:app --reload     # http://localhost:8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8000   # http://192.168.1.103:8000
 ```
+
+El endpoint `POST /api/analyze` usa el clasificador `experiments/dinov2/results/flora_classifier.joblib`
+y DINOv2 para estimar si las hojas parecen sanas o deterioradas. La primera solicitud carga
+DINOv2; si el archivo del clasificador está en otra ubicación, configúrala en
+`FLORA_CLASSIFIER_PATH` (relativa a la raíz del proyecto o absoluta). Las puntuaciones son
+estimaciones del modelo y no identifican síntomas ni causas.
 
 ## Convenciones
 
@@ -56,3 +62,51 @@ uvicorn main:app --reload     # http://localhost:8000
 - Ramas: `feat/frontend-*`, `feat/api-*`, `feat/ai-*`, `feat/segmentation-*`.
 - Respuestas mock desde el Día 1; el frontend nunca depende de APIs activas.
 - Sin base de datos en el MVP; imágenes temporales.
+
+## Fichas de cuidados con Ollama local
+
+Instala el modelo con `ollama pull llama3.2:1b` y ejecuta Ollama
+(`ollama serve` si no está iniciado). En `backend/.env` configura
+`OLLAMA_BASE_URL=http://192.168.1.103:11434` y `OLLAMA_MODEL=llama3.2:1b`.
+Para que Ollama acepte conexiones desde la IP de red, inícialo con
+`OLLAMA_HOST=0.0.0.0 ollama serve`. Inicia FastAPI con `cd backend` y
+`uvicorn main:app --reload --host 0.0.0.0 --port 8000`.
+
+Al identificar una planta o seleccionar otra coincidencia, el frontend envía su
+nombre científico a `GET /api/plants/profile?scientificName=Monstera%20deliciosa`.
+El backend solicita JSON estructurado a Ollama y valida los campos de
+`PlantProfile`, equivalentes a las entradas de `mockProfiles`. Las fichas se
+reutilizan por nombre durante la sesión del componente; los errores permiten
+reintentar. La generación dispone de 180 segundos en el backend.
+
+`NEXT_PUBLIC_USE_MOCKS` controla todas las respuestas simuladas, incluidas las fichas.
+Con `true` (por defecto), el frontend usa los mocks y no requiere Ollama.
+Con `false` en `frontend/.env.local`, las fichas se generan con Ollama y la
+identificación usa Pl@ntNet; configura `PLANTNET_API_KEY` en el backend.
+Reinicia Next.js después de modificar estas variables.
+
+El modelo genera cuidados a partir del nombre, no analiza la salud de la foto.
+`sources` se devuelve vacío porque no se consultan fuentes externas verificadas.
+
+### Catálogo generado por el modelo
+
+`backend/data/plants.json` contiene fichas de especies comunes generadas con el
+mismo modelo local. Cada entrada guarda su procedencia (modelo, fecha y versión
+del prompt) y `reviewed: false` hasta que una persona la revise. Las especies del
+catálogo se sirven al instante, sin llamar a Ollama, y `/api/identify` les asigna
+un `catalogId`. Para generarlo o completarlo (con Ollama en marcha):
+
+```bash
+cd backend
+python scripts/build_catalog.py               # solo las especies que faltan
+python scripts/build_catalog.py --only "Ficus lyrata"
+python scripts/build_catalog.py --force       # regenera las no revisadas
+```
+
+Las entradas con `reviewed: true` nunca se sobrescriben. Tras revisar una ficha,
+cambia su `reviewed` a `true` a mano. Todas las fichas se muestran con un aviso de
+que son generadas por IA y no verificadas con una fuente externa.
+
+## Licencia
+
+Este proyecto se distribuye bajo la [licencia MIT](LICENSE).

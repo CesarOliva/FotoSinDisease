@@ -1,0 +1,50 @@
+{
+  "scientificName": "Monstera obliqua",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T17:04:25.407497Z",
+  "reviewed": false,
+  "profile": {
+    "id": "monstera-obliqua",
+    "scientificName": "Monstera obliqua",
+    "commonNames": [
+      "Monstera de la sombra",
+      "Monstera de la sombra baja"
+    ],
+    "family": "Araceae",
+    "sunExposure": "partial_sun",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Hojas amarillentas",
+        "signs": "Las hojas tienen un color amarillento claro y pueden sentirse blandas.",
+        "solution": "Suele deberse al exceso de riego. Deja secar los primeros centímetros del sustrato y comprueba que la maceta drene bien.",
+        "kind": "yellowing"
+      }
+    ],
+    "light": "Luz parcialmente sombría. Tolera algo de luz directa, pero no directa.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté húmedo pero no empapado.",
+      "frequencyHint": "Suele ser cada 7–10 días en épocas cálidas y cada 2–3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 25.0
+    },
+    "humidity": "Media (más de 50 %). Agradece agrupar plantas o un humidificador.",
+    "substrate": "Aireado: fibra de coco o turba con corteza de pino y perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–2 m en interior",
+    "warnings": [
+      "Puede ser sensible a la sequía.",
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas."
+    ],
+    "prevention": [
+      "Mantén una rutina estable de riego.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

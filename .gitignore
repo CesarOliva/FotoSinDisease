@@ -21,6 +21,7 @@ experiments/outputs/*.png
 
 # Datos de prueba pesados y archivos temporales
 backend/uploads/
+# backend/data/cache/
 Thumbs.db
 .DS_Store
 

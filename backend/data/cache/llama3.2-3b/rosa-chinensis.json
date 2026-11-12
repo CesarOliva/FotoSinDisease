@@ -1,0 +1,61 @@
+{
+  "scientificName": "Rosa chinensis",
+  "model": "llama3.2:3b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-12T16:52:39.524879Z",
+  "reviewed": false,
+  "profile": {
+    "id": "rosa-chinensis",
+    "scientificName": "Rosa chinensis",
+    "commonNames": [
+      "Rosa de China",
+      "Rosa de la Reina"
+    ],
+    "family": "Rosaceae",
+    "sunExposure": "full_sun",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Pérdida de color",
+        "signs": "Las flores pierden su color intenso y se vuelven más pálidas.",
+        "solution": "Puede deberse a la falta de nutrientes. Riega con agua tibia y agrega un fertilizante equilibrado cada 2 semanas durante la temporada de crecimiento.",
+        "kind": "fading"
+      },
+      {
+        "name": "Enfermedad de la rosa",
+        "signs": "Las hojas y las flores comienzan a pudrirse y se forman manchas negras.",
+        "solution": "Aplica un fungicida específico para enfermedades de la rosa siguiendo las instrucciones del producto.",
+        "kind": "fading"
+      },
+      {
+        "name": "Pérdida de vigor",
+        "signs": "La planta parece más débil y no produce tantas flores como antes.",
+        "solution": "Asegúrate de que la planta reciba suficiente luz solar y riego, pero no excesivo. Revisa la fertilización y ajusta según sea necesario.",
+        "kind": "fading"
+      }
+    ],
+    "light": "Luz plena. La rosa de China prefiere la luz solar directa y no tolera la sombra.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté completamente seco.",
+      "frequencyHint": "Suele ser cada 7–10 días en verano y cada 4–6 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 10.0,
+      "maxC": 25.0
+    },
+    "humidity": "Baja (menos de 40 %). La rosa de China prefiere un ambiente seco.",
+    "substrate": "Suelo bien drenado y rico en materia orgánica.",
+    "drainage": "Imprescindible. Maceta con buen drenaje y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Requiere un mantenimiento regular para evitar la pudrición de raíz.",
+      "No es adecuada para jardines con agua estancada."
+    ],
+    "prevention": [
+      "Revisa la planta regularmente para detectar problemas temprano.",
+      "Aplica un fertilizante equilibrado cada 2 semanas durante la temporada de crecimiento.",
+      "Mantén la planta alejada de la sombra y asegúrate de que reciba suficiente luz solar."
+    ],
+    "sources": []
+  }
+}

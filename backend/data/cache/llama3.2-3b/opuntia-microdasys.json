@@ -1,0 +1,61 @@
+{
+  "scientificName": "Opuntia microdasys",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-11T02:38:38.933569Z",
+  "reviewed": false,
+  "profile": {
+    "id": "opuntia-microdasys",
+    "scientificName": "Opuntia microdasys",
+    "commonNames": [
+      "Cactus de la punta",
+      "Opuntia microdasys"
+    ],
+    "family": "Cactaceae",
+    "sunExposure": "shade",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Pérdida de raíces",
+        "signs": "Las raíces se desvanecen o se pierden durante el riego, lo que puede causar la muerte de la planta.",
+        "solution": "Asegúrate de no riegar durante un período prolongado de tiempo. Comprueba que la maceta drene bien y que no haya agua acumulada en el sustrato.",
+        "kind": "root_rot"
+      },
+      {
+        "name": "Infección por hongos",
+        "signs": "Las hojas y las raíces se ven afectadas por hongos, que pueden causar una pérdida de color y textura.",
+        "solution": "Limpia las hojas y las raíces con un paño húmedo y un producto de limpieza específico para cactos. Asegúrate de eliminar cualquier hongo o moho visible.",
+        "kind": "fading"
+      },
+      {
+        "name": "Pérdida de color",
+        "signs": "Las hojas y las raíces pierden su color natural.",
+        "solution": "Asegúrate de proporcionar suficiente luz y calor para la planta. Comprueba que la maceta drene bien y que no haya agua acumulada en el sustrato.",
+        "kind": "yellowing"
+      }
+    ],
+    "light": "Luz solar directa, pero no directa. Asegúrate de que la planta esté en un lugar con una luz moderada.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté húmedo pero no empapado.",
+      "frequencyHint": "Suele ser cada 7-10 días en verano y cada 4-6 días en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 25.0
+    },
+    "humidity": "Alta (más de 50%). Agradece un humidificador o un lugar con una temperatura constante.",
+    "substrate": "Aireado: fibra de pala o perlita con corteza de palo y perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Puede ser peligroso para los animales si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Mantén una rutina regular de riego y cuidado.",
+      "Limpia regularmente las hojas y las raíces para prevenir la infestación de hongos.",
+      "Revisa regularmente el envés de las hojas para detectar plagas iniciales.",
+      "Agradece un humidificador o un lugar con una temperatura constante para mantener una buena salud de la planta."
+    ],
+    "sources": []
+  }
+}
