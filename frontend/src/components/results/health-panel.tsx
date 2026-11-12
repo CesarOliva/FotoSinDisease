@@ -1,4 +1,4 @@
-import { HeartPulse, Info } from "lucide-react";
+import { HeartPulse, Info, ShieldCheck } from "lucide-react";
 import { cn } from "cn";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,7 +13,11 @@ import {
   severityLabels,
   symptomLabels,
 } from "@/lib/labels";
-import type { AnalysisResult, HealthStatus, Severity } from "@/lib/types";
+import type {
+  AnalysisResult,
+  HealthStatus,
+  Severity,
+} from "@/lib/types";
 
 export const healthStatusClass: Record<HealthStatus, string> = {
   no_obvious_issues: "bg-success text-success-foreground",
@@ -28,7 +32,15 @@ const severityClass: Record<Severity, string> = {
   unknown: "bg-muted text-muted-foreground",
 };
 
-export function HealthPanel({ health }: { health: AnalysisResult["health"] }) {
+export function HealthPanel({
+  health,
+  prevention,
+  preventionLoading,
+}: {
+  health: AnalysisResult["health"];
+  prevention: string[];
+  preventionLoading: boolean;
+}) {
   return (
     <Card>
       <CardHeader>
@@ -49,14 +61,7 @@ export function HealthPanel({ health }: { health: AnalysisResult["health"] }) {
               Estado estimado:{" "}
               {health.modelPrediction.condition === "healthy"
                 ? "Sana"
-                : "Deteriorada"}{" "}
-              ({(health.modelPrediction.confidence * 100).toFixed(2)}%)
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Puntuaciones estimadas — Sana:{" "}
-              {(health.modelPrediction.scores.healthy * 100).toFixed(2)}%;
-              Deteriorada:{" "}
-              {(health.modelPrediction.scores.deteriorated * 100).toFixed(2)}%.
+                : "Deteriorada"}
             </p>
           </div>
         )}
@@ -107,6 +112,30 @@ export function HealthPanel({ health }: { health: AnalysisResult["health"] }) {
           <Info className="mt-px size-3.5 shrink-0" aria-hidden />
           {health.disclaimer}
         </p>
+        <div className="border-t pt-5">
+          <section className="space-y-3">
+            <h3 className="flex items-center gap-2 font-heading text-base font-semibold">
+              <ShieldCheck className="size-5 text-primary" aria-hidden />
+              Prevención de enfermedades
+            </h3>
+            {prevention.length > 0 ? (
+              <ul className="space-y-2.5">
+                {prevention.map((tip) => (
+                  <li key={tip} className="flex gap-2.5">
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-muted-foreground">
+                {preventionLoading
+                  ? "Cargando recomendaciones de prevención de la ficha botánica…"
+                  : "No hay recomendaciones de prevención disponibles para esta especie."}
+              </p>
+            )}
+          </section>
+        </div>
       </CardContent>
     </Card>
   );

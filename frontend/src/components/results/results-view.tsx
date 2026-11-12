@@ -1,6 +1,7 @@
 import Image from "next/image";
 import {
   BookX,
+  CircleAlert,
   Droplets,
   HeartPulse,
   Info,
@@ -12,20 +13,12 @@ import { cn } from "cn";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { LoadingPanel } from "@/components/flow/status-panels";
 import type { Photo } from "@/components/photo/photo-slot";
 import { AddPlantButton } from "@/components/plants/add-plant-button";
-import {
-  CareProfile,
-  CommonProblemsCard,
-  PreventionCard,
-} from "@/components/results/care-profile";
+import { CareProfile } from "@/components/results/care-profile";
 import { HealthPanel, healthStatusClass } from "@/components/results/health-panel";
-import {
-  PlantViewer,
-  type SegmentationState,
-} from "@/components/results/plant-viewer";
 import { ProfileNotice } from "@/components/results/profile-notice";
-import { RecommendationsList } from "@/components/results/recommendations-list";
 import {
   healthStatusLabels,
   locationLabels,
@@ -38,6 +31,7 @@ import type {
   EnvironmentContext,
   LastWatered,
   LocationType,
+  PlantProfile,
 } from "@/lib/types";
 import { BASE_INTERVAL_DAYS } from "@/lib/water";
 
@@ -75,16 +69,23 @@ export function ResultsView({
   result,
   photos,
   context,
-  segmentation,
+  plantProfile,
+  profileLoading,
+  profileError,
+  onRetryProfile,
   onRestart,
 }: {
   result: AnalysisResult;
   photos: Photo[];
   context: EnvironmentContext;
-  segmentation: SegmentationState;
+  plantProfile: PlantProfile | null;
+  profileLoading: boolean;
+  profileError: boolean;
+  onRetryProfile: () => void;
   onRestart: () => void;
 }) {
-  const { species, plantProfile: profile, health } = result;
+  const { species, health } = result;
+  const profile = result.plantProfile ?? plantProfile;
   const commonName = species.commonName ?? profile?.commonNames[0];
   const suggested = result.environment.suggestedLocationType as LocationType;
   const locationMismatch =
@@ -92,6 +93,7 @@ export function ResultsView({
     suggested in locationLabels &&
     suggested !== "unknown" &&
     suggested !== context.locationType;
+  const hasProfilePanel = Boolean(profile || profileLoading || profileError);
 
   return (
     <section className="space-y-6">
@@ -185,7 +187,7 @@ export function ResultsView({
           </AlertDescription>
         </Alert>
       )}
-      {!profile && (
+      {!profile && !profileLoading && !profileError && (
         <Alert>
           <BookX aria-hidden />
           <AlertTitle>Sin ficha botánica para esta especie</AlertTitle>
@@ -207,25 +209,42 @@ export function ResultsView({
         </Alert>
       )}
 
-      <div className={cn("grid gap-6", profile && "lg:grid-cols-5")}>
-        <div className="space-y-6 lg:col-span-3">
-          <HealthPanel health={health} />
-          <RecommendationsList recommendations={result.recommendations} />
-          <PlantViewer
-            photos={photos}
-            observations={result.environment.observations}
-            segmentation={segmentation}
+      <div className={cn("grid gap-6", hasProfilePanel && "lg:grid-cols-5")}>
+        <div className={cn("space-y-6", hasProfilePanel && "lg:col-span-3")}>
+          <HealthPanel
+            health={health}
+            prevention={profile?.prevention ?? []}
+            preventionLoading={profileLoading && !profile}
           />
         </div>
-        {profile && (
+        {hasProfilePanel && (
           <div className="space-y-6 lg:col-span-2">
-            <ProfileNotice />
-            <CareProfile profile={profile} />
-            {profile.commonProblems && profile.commonProblems.length > 0 && (
-              <CommonProblemsCard problems={profile.commonProblems} />
-            )}
-            {profile.prevention.length > 0 && (
-              <PreventionCard tips={profile.prevention} />
+            {profile ? (
+              <>
+                <ProfileNotice />
+                <CareProfile profile={profile} />
+              </>
+            ) : profileLoading ? (
+              <LoadingPanel
+                title="Generando ficha botánica…"
+                description="La ficha aparecerá aquí cuando termine de generarse."
+                estimateSeconds={90}
+              />
+            ) : (
+              <Alert variant="destructive">
+                <CircleAlert aria-hidden />
+                <AlertTitle>No pudimos generar la ficha botánica</AlertTitle>
+                <AlertDescription>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-1"
+                    onClick={onRetryProfile}
+                  >
+                    Reintentar
+                  </Button>
+                </AlertDescription>
+              </Alert>
             )}
           </div>
         )}

@@ -8,17 +8,17 @@ import type { Photo } from "@/components/photo/photo-slot";
 import { SpeciesStep } from "@/components/flow/species-step";
 import { ErrorPanel, LoadingPanel } from "@/components/flow/status-panels";
 import { StepIndicator } from "@/components/flow/step-indicator";
-import type { SegmentationState } from "@/components/results/plant-viewer";
 import { ResultsView } from "@/components/results/results-view";
 import {
   analyzePlant,
   ApiError,
   identifyPlant,
-  segmentPlant,
 } from "@/lib/api";
+import { getCachedProfile, requestProfile } from "@/lib/profile-cache";
 import type {
   AnalysisResult,
   EnvironmentContext,
+  PlantProfile,
   SelectedSpecies,
   SpeciesCandidate,
 } from "@/lib/types";
@@ -35,6 +35,11 @@ type AnalysisState =
   | { status: "loading" }
   | { status: "error"; error: string }
   | { status: "success"; result: AnalysisResult };
+
+type ProfileState =
+  | { status: "loading" }
+  | { status: "error" }
+  | { status: "success"; profile: PlantProfile | null };
 
 // Una ranura por foto permitida (ver `PhotoStep`).
 const EMPTY_PHOTOS: (Photo | null)[] = Array.from({ length: MAX_IMAGES }, () => null);
@@ -61,18 +66,60 @@ export function AnalysisFlow() {
   const [manualName, setManualName] = useState("");
   const [context, setContext] = useState(EMPTY_CONTEXT);
   const [analysis, setAnalysis] = useState<AnalysisState | null>(null);
-  const [segmentation, setSegmentation] = useState<SegmentationState>({
-    status: "idle",
-  });
+  const [profileStates, setProfileStates] = useState<
+    Record<string, ProfileState>
+  >({});
   // Permite descartar respuestas que llegan después de reiniciar el flujo.
   const requestId = useRef(0);
+  const profileGeneration = useRef(0);
 
   const selectedPhotos = photos.filter((p): p is Photo => p !== null);
   const files = selectedPhotos.map((p) => p.file);
+  const completedAnalysis =
+    analysis?.status === "success" ? analysis.result : null;
+  const completedProfileState = completedAnalysis
+    ? profileStates[completedAnalysis.species.scientificName.trim()]
+    : undefined;
 
   function goTo(next: Step) {
     setStep(next);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function loadProfile(
+    species: Pick<SelectedSpecies, "scientificName" | "catalogId">
+  ) {
+    const scientificName = species.scientificName.trim();
+    if (!scientificName) return;
+
+    const generation = profileGeneration.current;
+    const cached = getCachedProfile(scientificName);
+    if (cached) {
+      setProfileStates((previous) => ({
+        ...previous,
+        [scientificName]: { status: "success", profile: cached },
+      }));
+      return;
+    }
+
+    setProfileStates((previous) => ({
+      ...previous,
+      [scientificName]: { status: "loading" },
+    }));
+    try {
+      const profile = await requestProfile(scientificName, species.catalogId);
+      if (generation !== profileGeneration.current) return;
+      setProfileStates((previous) => ({
+        ...previous,
+        [scientificName]: { status: "success", profile },
+      }));
+    } catch {
+      if (generation !== profileGeneration.current) return;
+      setProfileStates((previous) => ({
+        ...previous,
+        [scientificName]: { status: "error" },
+      }));
+    }
   }
 
   function handleSelectPhoto(index: number, file: File) {
@@ -90,6 +137,9 @@ export function AnalysisFlow() {
     );
     setPhotoError(null);
     setIdentify(null);
+    requestId.current++;
+    profileGeneration.current++;
+    setProfileStates({});
   }
 
   function handleRemovePhoto(index: number) {
@@ -97,10 +147,15 @@ export function AnalysisFlow() {
     if (previous) URL.revokeObjectURL(previous.url);
     setPhotos(photos.map((p, i) => (i === index ? null : p)));
     setIdentify(null);
+    requestId.current++;
+    profileGeneration.current++;
+    setProfileStates({});
   }
 
   async function runIdentify() {
     const id = ++requestId.current;
+    profileGeneration.current++;
+    setProfileStates({});
     setIdentify({ status: "loading" });
     goTo(1);
     try {
@@ -109,6 +164,7 @@ export function AnalysisFlow() {
       setIdentify({ status: "success", candidates });
       setSelection(candidates.length > 0 ? "candidate-0" : "");
       setManualName("");
+      if (candidates[0]) void loadProfile(candidates[0]);
     } catch (error) {
       if (id !== requestId.current) return;
       setIdentify({ status: "error", error: errorMessage(error) });
@@ -132,20 +188,23 @@ export function AnalysisFlow() {
     return { scientificName: "", confirmed: false };
   }
 
-  async function runSegmentation(id: number) {
-    setSegmentation({ status: "loading" });
-    try {
-      const result = await segmentPlant(files[0]);
-      if (id === requestId.current) setSegmentation({ status: "success", result });
-    } catch {
-      if (id === requestId.current) setSegmentation({ status: "error" });
+  function handleSelectionChange(value: string) {
+    setSelection(value);
+    if (value.startsWith("candidate-") && identify?.status === "success") {
+      const candidate =
+        identify.candidates[Number(value.slice("candidate-".length))];
+      if (candidate) void loadProfile(candidate);
     }
+  }
+
+  function continueToContext() {
+    void loadProfile(selectedSpecies());
+    goTo(2);
   }
 
   async function runAnalyze() {
     const id = ++requestId.current;
     setAnalysis({ status: "loading" });
-    setSegmentation({ status: "idle" });
     goTo(3);
 
     let result: AnalysisResult;
@@ -159,18 +218,11 @@ export function AnalysisFlow() {
     }
     if (id !== requestId.current) return;
     setAnalysis({ status: "success", result });
-
-    // La segmentación es opcional: si el análisis no la trae, se pide aparte
-    // y su fallo nunca bloquea los resultados.
-    if (result.segmentation) {
-      setSegmentation({ status: "success", result: result.segmentation });
-    } else {
-      void runSegmentation(id);
-    }
   }
 
   function restart() {
     requestId.current++;
+    profileGeneration.current++;
     for (const photo of photos) if (photo) URL.revokeObjectURL(photo.url);
     setPhotos(EMPTY_PHOTOS);
     setPhotoError(null);
@@ -179,7 +231,7 @@ export function AnalysisFlow() {
     setManualName("");
     setContext(EMPTY_CONTEXT);
     setAnalysis(null);
-    setSegmentation({ status: "idle" });
+    setProfileStates({});
     goTo(0);
   }
 
@@ -207,11 +259,11 @@ export function AnalysisFlow() {
           error={identify.status === "error" ? identify.error : null}
           selection={selection}
           manualName={manualName}
-          onSelectionChange={setSelection}
+          onSelectionChange={handleSelectionChange}
           onManualNameChange={setManualName}
           onRetry={runIdentify}
           onBack={() => goTo(0)}
-          onContinue={() => goTo(2)}
+          onContinue={continueToContext}
         />
       )}
 
@@ -238,12 +290,26 @@ export function AnalysisFlow() {
           </Button>
         </ErrorPanel>
       )}
-      {step === 3 && analysis?.status === "success" && (
+      {step === 3 && completedAnalysis && (
         <ResultsView
-          result={analysis.result}
+          result={completedAnalysis}
           photos={selectedPhotos}
           context={context}
-          segmentation={segmentation}
+          plantProfile={
+            completedAnalysis.plantProfile ??
+            (completedProfileState?.status === "success"
+              ? completedProfileState.profile
+              : null)
+          }
+          profileLoading={
+            !completedAnalysis.plantProfile &&
+            completedProfileState?.status === "loading"
+          }
+          profileError={
+            !completedAnalysis.plantProfile &&
+            completedProfileState?.status === "error"
+          }
+          onRetryProfile={() => void loadProfile(completedAnalysis.species)}
           onRestart={restart}
         />
       )}
