@@ -43,6 +43,23 @@ export function HealthPanel({ health }: { health: AnalysisResult["health"] }) {
         </CardAction>
       </CardHeader>
       <CardContent className="space-y-5">
+        {health.modelPrediction && (
+          <div className="rounded-lg border p-3">
+            <p className="font-medium">
+              Estado estimado:{" "}
+              {health.modelPrediction.condition === "healthy"
+                ? "Sana"
+                : "Deteriorada"}{" "}
+              ({(health.modelPrediction.confidence * 100).toFixed(2)}%)
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Puntuaciones estimadas — Sana:{" "}
+              {(health.modelPrediction.scores.healthy * 100).toFixed(2)}%;
+              Deteriorada:{" "}
+              {(health.modelPrediction.scores.deteriorated * 100).toFixed(2)}%.
+            </p>
+          </div>
+        )}
         {health.symptoms.length > 0 ? (
           <ul className="space-y-3">
             {health.symptoms.map((symptom, i) => (
@@ -64,7 +81,9 @@ export function HealthPanel({ health }: { health: AnalysisResult["health"] }) {
           </ul>
         ) : (
           <p className="text-muted-foreground">
-            No se observaron síntomas visibles en las fotos.
+            {health.modelPrediction
+              ? "El clasificador estima el estado general, pero no identifica síntomas concretos."
+              : "No se observaron síntomas visibles en las fotos."}
           </p>
         )}
 

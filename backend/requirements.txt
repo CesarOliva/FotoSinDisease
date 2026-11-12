@@ -3,3 +3,9 @@ uvicorn
 httpx
 dotenv
 python-multipart
+torch
+torchvision
+numpy
+Pillow
+scikit-learn
+joblib

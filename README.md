@@ -49,6 +49,12 @@ cp .env.example .env          # completar claves de API
 uvicorn main:app --reload --host 0.0.0.0 --port 8000   # http://192.168.1.103:8000
 ```
 
+El endpoint `POST /api/analyze` usa el clasificador `experiments/dinov2/results/flora_classifier.joblib`
+y DINOv2 para estimar si las hojas parecen sanas o deterioradas. La primera solicitud carga
+DINOv2; si el archivo del clasificador está en otra ubicación, configúrala en
+`FLORA_CLASSIFIER_PATH` (relativa a la raíz del proyecto o absoluta). Las puntuaciones son
+estimaciones del modelo y no identifican síntomas ni causas.
+
 ## Convenciones
 
 - Claves de API **solo en el backend**; prohibido en variables `NEXT_PUBLIC_*`.

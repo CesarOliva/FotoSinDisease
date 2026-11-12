@@ -191,8 +191,8 @@ export function ResultsView({
           <AlertTitle>Sin ficha botánica para esta especie</AlertTitle>
           <AlertDescription>
             Aún no tenemos sus cuidados verificados en el catálogo. Las
-            recomendaciones se basan en tu entorno y en lo observado en las
-            fotos.
+          recomendaciones son generales y la clasificación visual no identifica
+          síntomas concretos ni sus causas.
           </AlertDescription>
         </Alert>
       )}

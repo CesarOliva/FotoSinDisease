@@ -79,6 +79,12 @@ export type HealthStatus =
   | "review_needed"
   | "insufficient_evidence";
 
+export type ModelPrediction = {
+  condition: "healthy" | "deteriorated";
+  confidence: number;
+  scores: { healthy: number; deteriorated: number };
+};
+
 export type SunExposure = "full_sun" | "partial_sun" | "indirect" | "shade";
 export type WaterNeeds = "low" | "medium" | "high";
 export type CareDifficulty = "easy" | "medium" | "hard";
@@ -144,6 +150,7 @@ export type AnalysisResult = {
     symptoms: Symptom[];
     possibleCauses: string[];
     disclaimer: string;
+    modelPrediction?: ModelPrediction;
   };
   recommendations: Recommendation[];
   segmentation?: SegmentationResult;

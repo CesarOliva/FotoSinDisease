@@ -228,7 +228,7 @@ export function AnalysisFlow() {
         <LoadingPanel
           photoUrl={selectedPhotos[0]?.url}
           title="Analizando tu planta…"
-          description="Revisamos el entorno, buscamos síntomas visibles y preparamos recomendaciones. Puede tardar hasta un minuto."
+          description="Clasificamos el estado general de las hojas. La primera vez puede tardar varios minutos mientras se carga el modelo."
         />
       )}
       {step === 3 && analysis?.status === "error" && (

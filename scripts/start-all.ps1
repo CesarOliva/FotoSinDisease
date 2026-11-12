@@ -29,6 +29,14 @@ function Start-Window($scriptPath, $title) {
     Start-Process powershell -ArgumentList $args | Out-Null
 }
 
+function Get-BackendOpenApi {
+    try {
+        return Invoke-RestMethod -Uri 'http://127.0.0.1:8000/openapi.json' -TimeoutSec 5
+    } catch {
+        return $null
+    }
+}
+
 if (-not (Test-Port 11434)) {
     Start-Process ollama -ArgumentList 'serve' -WindowStyle Hidden
     if (-not (Wait-Port 11434 30)) { throw 'Ollama no arranco en el puerto 11434' }
@@ -36,6 +44,82 @@ if (-not (Test-Port 11434)) {
 
 if (-not (Test-Port 8000)) { Start-Window (Join-Path $PSScriptRoot 'start-backend.ps1') 'FotoSinDisease backend' }
 if (-not (Wait-Port 8000)) { throw 'El backend no arranco en el puerto 8000' }
+
+$backendOpenApi = Get-BackendOpenApi
+if (-not $backendOpenApi) {
+    throw 'No se pudo verificar el backend en el puerto 8000. Reinicia el backend e intenta de nuevo.'
+}
+if (@($backendOpenApi.paths.PSObject.Properties.Name) -notcontains '/api/analyze') {
+    $backendPaths = @($backendOpenApi.paths.PSObject.Properties.Name)
+    if (
+        $backendPaths -notcontains '/api/identify' -or
+        $backendPaths -notcontains '/api/plants/profile' -or
+        $backendPaths -notcontains '/health'
+    ) {
+        throw 'El puerto 8000 esta ocupado por un servicio distinto; no se reinicio por seguridad.'
+    }
+
+    $backendOpenApi = Get-BackendOpenApi
+    if (-not $backendOpenApi -or @($backendOpenApi.paths.PSObject.Properties.Name) -notcontains '/api/analyze') {
+        $listener = Get-NetTCPConnection -State Listen -LocalPort 8000 -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+        $listenerProcess = $null
+        if ($listener) {
+            $listenerProcess = Get-Process -Id $listener.OwningProcess -ErrorAction SilentlyContinue
+        }
+        if ($listenerProcess) {
+            Write-Host 'Backend antiguo detectado; reiniciandolo para cargar /api/analyze...'
+            Stop-Process -Id $listener.OwningProcess -Force -ErrorAction SilentlyContinue
+        }
+
+        $deadline = (Get-Date).AddSeconds(15)
+        while ((Get-Date) -lt $deadline) {
+            $backendOpenApi = Get-BackendOpenApi
+            if (
+                $backendOpenApi -and
+                @($backendOpenApi.paths.PSObject.Properties.Name) -contains '/api/analyze'
+            ) {
+                break
+            }
+            if (-not (Test-Port 8000)) { break }
+            Start-Sleep -Milliseconds 500
+        }
+        if (
+            (-not $backendOpenApi -or
+                @($backendOpenApi.paths.PSObject.Properties.Name) -notcontains '/api/analyze') -and
+            (Test-Port 8000)
+        ) {
+            throw 'El backend antiguo no libero el puerto 8000; detenlo manualmente y vuelve a ejecutar este script.'
+        }
+
+        if (
+            -not $backendOpenApi -or
+            @($backendOpenApi.paths.PSObject.Properties.Name) -notcontains '/api/analyze'
+        ) {
+            Start-Window (Join-Path $PSScriptRoot 'start-backend.ps1') 'FotoSinDisease backend'
+            if (-not (Wait-Port 8000)) { throw 'El backend actualizado no arranco en el puerto 8000.' }
+        }
+    }
+
+    $backendOpenApi = $null
+    $deadline = (Get-Date).AddSeconds(45)
+    while ((Get-Date) -lt $deadline) {
+        $backendOpenApi = Get-BackendOpenApi
+        if (
+            $backendOpenApi -and
+            @($backendOpenApi.paths.PSObject.Properties.Name) -contains '/api/analyze'
+        ) {
+            break
+        }
+        Start-Sleep -Milliseconds 500
+    }
+    if (
+        -not $backendOpenApi -or
+        @($backendOpenApi.paths.PSObject.Properties.Name) -notcontains '/api/analyze'
+    ) {
+        throw 'El backend reiniciado no publico POST /api/analyze. Revisa la ventana del backend.'
+    }
+}
 
 if (-not (Test-Port 3000)) { Start-Window (Join-Path $PSScriptRoot 'start-frontend.ps1') 'FotoSinDisease frontend' }
 if (-not (Wait-Port 3000)) { throw 'El frontend no arranco en el puerto 3000' }
