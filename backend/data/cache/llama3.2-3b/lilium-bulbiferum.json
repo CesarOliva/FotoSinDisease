@@ -1,0 +1,55 @@
+{
+  "scientificName": "Lilium bulbiferum",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T19:05:44.890975Z",
+  "reviewed": false,
+  "profile": {
+    "id": "lilium-bulbiferum",
+    "scientificName": "Lilium bulbiferum",
+    "commonNames": [
+      "Lilas de la Luna",
+      "Lilium"
+    ],
+    "family": "Liliaceae",
+    "sunExposure": "full_sun",
+    "waterNeeds": "high",
+    "commonProblems": [
+      {
+        "name": "Pétalos amarillos",
+        "signs": "Las pétalos se vuelven amarillos y descoloridos a medida que se acercan al viento.",
+        "solution": "Asegúrate de que la planta esté bien cubierta y protegida de la intemperie. Puedes usar un cubo de polietileno o una manta para protegerla.",
+        "kind": "yellowing"
+      },
+      {
+        "name": "Pétalos descoloridos",
+        "signs": "Los pétalos se vuelven descoloridos y amarillos a medida que se acercan al viento.",
+        "solution": "Asegúrate de que la planta esté bien cubierta y protegida de la intemperie. Puedes usar un cubo de polietileno o una manta para protegerla.",
+        "kind": "yellowing"
+      }
+    ],
+    "light": "Luz directa y soleada. Tolera sombra, pero puede requerir un poco de luz indirecta.",
+    "watering": {
+      "criterion": "Riega cuando el suelo esté húmedo pero no empapado.",
+      "frequencyHint": "Suele ser cada 7-10 días en verano y cada 2-3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 25.0
+    },
+    "humidity": "Alta (más de 60%). Agradece un humidificador o un lugar con buena ventilación.",
+    "substrate": "Aireado: fibra de pino o madera seca con perlita.",
+    "drainage": "Asegúrate de que la planta esté bien cubierta y protegida de la intemperie.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Puede ser tóxica para perros y gatos si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Mantén una rutina regular de riego y cuidado.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

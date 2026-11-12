@@ -1,0 +1,234 @@
+"use client";
+
+import Image from "next/image";
+import { Camera, CircleAlert, CircleQuestionMark, ImagePlus, TriangleAlert } from "lucide-react";
+import { useState } from "react";
+import { cn } from "cn";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { PhotoSlot } from "@/components/photo/photo-slot";
+import { ErrorPanel, LoadingPanel } from "@/components/flow/status-panels";
+import { PhotoStrip } from "@/components/identify/photo-strip";
+import type { PlantIdentification } from "@/components/identify/use-plant-identification";
+import { MAX_IMAGES, MAX_UPLOAD_SIZE_MB } from "@/lib/validation";
+
+const LOW_CONFIDENCE = 0.3;
+
+export function IdentificationPanel({
+    identification,
+    action,
+}: {
+    identification: PlantIdentification;
+    action?: React.ReactNode;
+}) {
+    const { photo, photos, canAddPhoto, photoError, identify, selected, candidate } = identification;
+    const [choosingSource, setChoosingSource] = useState(false);
+
+    const photoStrip = (
+        <PhotoStrip
+            photos={photos}
+            canAdd={canAddPhoto}
+            onAdd={identification.addPhoto}
+            onRemove={identification.removePhoto}
+        />
+    );
+    const photoErrorAlert = photoError && (
+        <Alert variant="destructive">
+            <CircleAlert aria-hidden />
+            <AlertDescription>{photoError}</AlertDescription>
+        </Alert>
+    );
+
+    function handleFile(file: File | undefined) {
+        if (file) identification.selectPhoto(file);
+    }
+
+    if (identify.status === "idle") {
+        return (
+            <div className="mx-auto max-w-md">
+                <input
+                    id="identify-image-input"
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    tabIndex={-1}
+                    aria-label="Seleccionar una imagen de la planta"
+                    onChange={(event) => {
+                        handleFile(event.target.files?.[0]);
+                        event.target.value = "";
+                    }}
+                />
+                <input
+                    id="identify-camera-input"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    className="sr-only"
+                    tabIndex={-1}
+                    aria-label="Tomar una foto de la planta con la cámara"
+                    onChange={(event) => {
+                        handleFile(event.target.files?.[0]);
+                        event.target.value = "";
+                    }}
+                />
+                <PhotoSlot
+                    title="Toma o sube una foto"
+                    hint="Una sola planta, con buena luz y bien enfocada"
+                    photo={null}
+                    featured
+                    onSelect={identification.selectPhoto}
+                    onRemove={identification.reset}
+                    onRequestSelect={() => setChoosingSource(true)}
+                    selectionContent={choosingSource ? (
+                        <div className="flex size-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed bg-card p-4 text-center">
+                            <span className="text-md font-medium">¿Cómo quieres agregar tu foto?</span>
+                            <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-center">
+                                <Button asChild size="lg">
+                                    <label htmlFor="identify-camera-input" className="cursor-pointer">
+                                        <Camera data-icon="inline-start" aria-hidden />
+                                        Abrir cámara
+                                    </label>
+                                </Button>
+                                <Button asChild size="lg" variant="outline">
+                                    <label htmlFor="identify-image-input" className="cursor-pointer">
+                                        <ImagePlus data-icon="inline-start" aria-hidden />
+                                        Seleccionar imagen
+                                    </label>
+                                </Button>
+                            </div>
+                            <Button size="sm" variant="ghost" onClick={() => setChoosingSource(false)}>
+                                Volver
+                            </Button>
+                        </div>
+                    ) : undefined}
+                    className="sm:aspect-4/3"
+                />
+                {photoErrorAlert && <div className="mt-3">{photoErrorAlert}</div>}
+                <p className="mt-3 text-center text-xs text-muted-foreground">
+                    JPG o PNG, hasta {MAX_UPLOAD_SIZE_MB} MB. Después podrás añadir
+                    hasta {MAX_IMAGES} fotos para afinar el resultado.
+                </p>
+            </div>
+        );
+    }
+
+    if (identify.status === "loading") {
+        return (
+            <LoadingPanel
+                photoUrl={photo?.url}
+                title="Identificando tu planta…"
+                description="Comparando tus fotos con la base de datos de especies."
+            />
+        );
+    }
+
+    if (identify.status === "error") {
+        return (
+            <div className="space-y-3">
+                <ErrorPanel message={identify.error} onRetry={identification.retry}>
+                    <Button variant="outline" onClick={identification.reset}>Empezar con otra foto</Button>
+                </ErrorPanel>
+                {/* Con varias fotos, quitar la que falla vuelve a identificar con el resto. */}
+                {photos.length > 1 && photoStrip}
+                {photoErrorAlert}
+            </div>
+        );
+    }
+
+    if (!candidate || !photo) {
+        return (
+            <div className="space-y-3">
+                <Alert>
+                    <CircleQuestionMark aria-hidden />
+                    <AlertTitle>No reconocimos la planta</AlertTitle>
+                    <AlertDescription>
+                        Prueba con otra foto donde se vea la planta completa y con luz natural,
+                        o añade una foto de otra parte de la planta.
+                    </AlertDescription>
+                </Alert>
+                {photos.length > 0 && photoStrip}
+                {photoErrorAlert}
+                <Button variant="outline" onClick={identification.reset}>Empezar con otra foto</Button>
+            </div>
+        );
+    }
+
+    const candidates = identify.candidates;
+    const [commonName, ...otherNames] = candidate.commonNames;
+    const percent = candidate.score === null ? null : Math.round(candidate.score * 100);
+    const lowConfidence = (candidate.score ?? 0) < LOW_CONFIDENCE;
+
+    return (
+        <div className="overflow-hidden rounded-3xl border bg-card shadow-sm duration-500 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 sm:flex">
+            <div className="relative aspect-4/3 sm:aspect-auto sm:w-64 sm:shrink-0">
+                <Image
+                    src={photo.url}
+                    alt={commonName ?? candidate.scientificName}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                />
+            </div>
+
+            <div className="flex-1 space-y-4 p-4 sm:p-6">
+                <div>
+                    {percent !== null && (
+                        <Badge variant="secondary">{percent} % de similitud</Badge>
+                    )}
+
+                    <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+                        {commonName ?? candidate.scientificName}
+                    </h2>
+
+                    <p className="text-muted-foreground">
+                        <i>{candidate.scientificName}</i>
+                        {otherNames.length > 0 && ` · ${otherNames.join(", ")}`}
+                    </p>
+                </div>
+
+                {lowConfidence && (
+                    <p className="flex gap-2 rounded-lg bg-warning p-2.5 text-sm text-warning-foreground">
+                        <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
+                        Coincidencia baja: compara con tu planta antes de seguir sus cuidados.
+                    </p>
+                )}
+
+                {candidates.length > 1 && (
+                    <div>
+                        <p className="mb-1.5 text-xs text-muted-foreground"> ¿No es esta? Otras coincidencias:</p>
+
+                        <div className="flex flex-wrap gap-1.5">
+                            {candidates.map((c, i) => (
+                                <button
+                                    key={c.scientificName}
+                                    type="button"
+                                    aria-pressed={i === selected}
+                                    onClick={() => identification.choose(i)}
+                                    className={cn(
+                                        "rounded-full border px-3 py-1 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                                        i === selected
+                                        ? "border-primary bg-accent text-accent-foreground"
+                                        : "hover:bg-muted"
+                                    )}
+                                >
+                                    {c.commonNames[0] ?? c.scientificName}
+                                    {c.score !== null && (
+                                        <span className="ml-1.5 text-xs text-muted-foreground tabular-nums">
+                                        {Math.round(c.score * 100)} %
+                                        </span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {photoStrip}
+                {photoErrorAlert}
+
+                {action}
+            </div>
+        </div>
+    );
+}

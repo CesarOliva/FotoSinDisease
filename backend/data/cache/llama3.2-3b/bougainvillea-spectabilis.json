@@ -1,0 +1,62 @@
+{
+  "scientificName": "Bougainvillea spectabilis",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T16:56:18.772439Z",
+  "reviewed": false,
+  "profile": {
+    "id": "bougainvillea-spectabilis",
+    "scientificName": "Bougainvillea spectabilis",
+    "commonNames": [
+      "Bougainvillea",
+      "Flor de la pasión",
+      "Flor de fuego"
+    ],
+    "family": "Apocynaceae",
+    "sunExposure": "shade",
+    "waterNeeds": "high",
+    "commonProblems": [
+      {
+        "name": "Pérdida de flores",
+        "signs": "Las flores no aparecen o se pierden, y el tallo se vuelve amarillo o marrón.",
+        "solution": "Asegúrate de que la planta reciba suficiente luz y agua. Asegúrate de que la maceta drene bien y no esté demasiado húmeda.",
+        "kind": "pests"
+      },
+      {
+        "name": "Pérdida de hojas",
+        "signs": "Las hojas se desvanecen o se pierden, y el tallo se vuelve marrón.",
+        "solution": "Revisa el envés de las hojas para detectar plagas o enfermedades. Asegúrate de que la planta reciba suficiente luz y agua.",
+        "kind": "pests"
+      },
+      {
+        "name": "Pérdida de raíces",
+        "signs": "Las raíces se desvanecen o se pierden, y el tallo se vuelve marrón.",
+        "solution": "Revisa el sustrato y asegúrate de que no haya agua acumulada en la maceta. Asegúrate de que la planta reciba suficiente luz y agua.",
+        "kind": "pests"
+      }
+    ],
+    "light": "Luz directa brillante. Tolera algo de sol suave de mañana; el sol directo intenso quema las hojas.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté húmedo pero no empapado.",
+      "frequencyHint": "Suele ser cada 7–10 días en épocas cálidas y cada 2–3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 25.0
+    },
+    "humidity": "Alta (más de 60 %). Agradece agrupar plantas o un humidificador.",
+    "substrate": "Aireado: fibra de coco o turba con corteza de pino y perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Toxica para perros y gatos si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

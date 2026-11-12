@@ -1,0 +1,49 @@
+{
+  "scientificName": "Cabomba caroliniana",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T17:01:05.042151Z",
+  "reviewed": false,
+  "profile": {
+    "id": "cabomba-caroliniana",
+    "scientificName": "Cabomba caroliniana",
+    "commonNames": [
+      "Cabomba",
+      "Cabomba Carolina"
+    ],
+    "family": "Ceratophylloideae",
+    "sunExposure": "partial_sun",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Puntas marrones y secas",
+        "signs": "Las puntas de las hojas se ven secas, crujientes y de color marrón.",
+        "solution": "Puede relacionarse con aire seco o riego irregular. Mantén una rutina estable y aleja la planta de corrientes calientes.",
+        "kind": "brown_tips"
+      }
+    ],
+    "light": "Luz parcialmente soleada. Tolera algo de sol directo de día.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté ligeramente seco al tacto.",
+      "frequencyHint": "Suele ser cada 7–10 días en verano y cada 2–3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 10.0,
+      "maxC": 18.0
+    },
+    "humidity": "Media (más de 50 %). Agradece un humidificador.",
+    "substrate": "Aireado: fibra de pino y perlita con corteza de pino.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–2 m en interior",
+    "warnings": [
+      "Puede ser tóxica para perros y gatos si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

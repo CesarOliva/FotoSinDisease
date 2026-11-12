@@ -1,0 +1,55 @@
+{
+  "scientificName": "Cryptocoryne wendtii",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T17:02:10.081821Z",
+  "reviewed": false,
+  "profile": {
+    "id": "cryptocoryne-wendtii",
+    "scientificName": "Cryptocoryne wendtii",
+    "commonNames": [
+      "Montería de Wendt",
+      "Monstera de Wendt"
+    ],
+    "family": "Coryphaceae",
+    "sunExposure": "indirect",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Puntas marrones y secas",
+        "signs": "Las puntas de las hojas se ven secas, crujientes y de color marrón.",
+        "solution": "Puede relacionarse con aire seco o riego irregular. Mantén una rutina estable y aleja la planta de corrientes calientes.",
+        "kind": "brown_tips"
+      }
+    ],
+    "light": "Luz suave y uniforme. Tolera algo de luz directa, pero no directa.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté ligeramente seco al tacto.",
+      "frequencyHint": "Suele ser cada 7-10 días en épocas cálidas y cada 2-3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 25.0
+    },
+    "humidity": "Media (más de 50 %). Agradece un humidificador o un lugar con buena ventilación.",
+    "substrate": "Aireado: fibra de coco o perlita con corteza de pino.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–2 m en interior",
+    "warnings": [
+      "Puede ser sensible a la exposición directa al sol.",
+      "Revisa regularmente las hojas para detectar plagas como araña roja o cochinilla.",
+      "Mantén una temperatura entre 15-25°C para evitar la pudrición de raíz.",
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}

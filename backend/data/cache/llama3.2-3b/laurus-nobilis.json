@@ -1,0 +1,61 @@
+{
+  "scientificName": "Laurus nobilis",
+  "model": "llama3.2:3b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-11T18:52:52.105991Z",
+  "reviewed": false,
+  "profile": {
+    "id": "laurus-nobilis",
+    "scientificName": "Laurus nobilis",
+    "commonNames": [
+      "Romanesco",
+      "Laurus",
+      "Tomillo"
+    ],
+    "family": "Lauraceae",
+    "sunExposure": "full_sun",
+    "waterNeeds": "low",
+    "commonProblems": [
+      {
+        "name": "Puntas marrones y secas",
+        "signs": "Los bordes o las puntas de las hojas se ven secos, crujientes y de color marrón.",
+        "solution": "Puede relacionarse con aire seco o riego irregular. Mantén una rutina estable y aleja la planta de corrientes calientes.",
+        "kind": "brown_tips"
+      },
+      {
+        "name": "Hojas marchitas",
+        "signs": "Las hojas se marchitan y mueren, especialmente en invierno.",
+        "solution": "Puede deberse a la falta de luz o a un riego excesivo. Asegúrate de que la planta reciba luz solar directa durante al menos 2 horas al día.",
+        "kind": "yellowing"
+      },
+      {
+        "name": "Pulgas",
+        "signs": "Pulgas blancas o negras se ven en las hojas y tallos.",
+        "solution": "Aplica un producto de control de pulgas específico para plantas, siguiendo las instrucciones del producto.",
+        "kind": "pests"
+      }
+    ],
+    "light": "Luz intensa y directa. Prefiere el sol total durante al menos 2 horas al día.",
+    "watering": {
+      "criterion": "Riega cuando el sustrato esté completamente seco.",
+      "frequencyHint": "Suele ser cada 7–10 días en verano y cada 4–6 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 10.0,
+      "maxC": 25.0
+    },
+    "humidity": "Baja (menos de 40 %). Agradece buena ventilación.",
+    "substrate": "Pezuño o turba con perlita y corteza de pino.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Tóxica para perros y gatos si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja."
+    ],
+    "sources": []
+  }
+}

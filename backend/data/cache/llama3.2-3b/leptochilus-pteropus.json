@@ -1,0 +1,61 @@
+{
+  "scientificName": "Leptochilus pteropus",
+  "model": "llama3.2:1b",
+  "promptVersion": "v3",
+  "generatedAt": "2026-11-09T16:58:17.098970Z",
+  "reviewed": false,
+  "profile": {
+    "id": "leptochilus-pteropus",
+    "scientificName": "Leptochilus pteropus",
+    "commonNames": [
+      "Papaya de la isla de Pascua",
+      "Papaya de la isla de Pascua"
+    ],
+    "family": "Rutaceae",
+    "sunExposure": "full_sun",
+    "waterNeeds": "high",
+    "commonProblems": [
+      {
+        "name": "Papaya amarilla",
+        "signs": "Las papayas se vuelven amarillas y se vuelven a poner en forma, pero no se pueden consumir.",
+        "solution": "Deja que se sequen completamente antes de consumir. Asegúrate de que la planta esté bien secada antes de cortarla.",
+        "kind": "yellowing"
+      },
+      {
+        "name": "Papaya amarilla",
+        "signs": "Las papayas se vuelven amarillas y se vuelven a poner en forma, pero no se pueden consumir.",
+        "solution": "Deja que se sequen completamente antes de consumir. Asegúrate de que la planta esté bien secada antes de cortarla.",
+        "kind": "yellowing"
+      },
+      {
+        "name": "Papaya amarilla",
+        "signs": "Las papayas se vuelven amarillas y se vuelven a poner en forma, pero no se pueden consumir.",
+        "solution": "Deja que se sequen completamente antes de consumir. Asegúrate de que la planta esté bien secada antes de cortarla.",
+        "kind": "yellowing"
+      }
+    ],
+    "light": "Full sun. Tolera sombra, pero no sombra intensa. Puede tolerar un poco de sombra, pero no es necesario.",
+    "watering": {
+      "criterion": "Riega cuando el suelo esté húmedo y la planta esté bien secada.",
+      "frequencyHint": "Suele ser cada 7-10 días en verano y cada 2-3 semanas en invierno."
+    },
+    "temperature": {
+      "minC": 15.0,
+      "maxC": 25.0
+    },
+    "humidity": "High (60-80%). Agradece un humidificador o un sistema de ventilación.",
+    "substrate": "Aireado: fibra de coco o turba con corteza de pino y perlita.",
+    "drainage": "Imprescindible. Maceta con agujeros y sin agua acumulada en el plato.",
+    "size": "1–3 m en interior",
+    "warnings": [
+      "Puede ser tóxica para perros y gatos si se mastica (oxalato de calcio)."
+    ],
+    "prevention": [
+      "Evita el encharcamiento para prevenir la pudrición de raíz.",
+      "Limpia las hojas con un paño húmedo para facilitar la revisión de plagas.",
+      "Revisa el envés de las hojas en busca de cochinilla o araña roja.",
+      "Mantén buena ventilación para reducir condiciones favorables a hongos."
+    ],
+    "sources": []
+  }
+}
